@@ -11,8 +11,9 @@ public class Main {
 						
 		JFrame f = new JFrame("YuGiOh!");
 		f.setContentPane(game);
-		f.setSize(900, 1000);	
+		f.setSize(1000, 900);	
 		f.setVisible(true);
+		f.setResizable(false);
 		
 		if(!game.PerpareGame()){
 			JOptionPane.showMessageDialog(null, "Hiba a betöltés közben!");
@@ -21,8 +22,6 @@ public class Main {
 			return;
 		}
 		
-		game.invalidate();
-		game.validate();
-		game.repaint();
+		game.Redraw();
 	}
 }

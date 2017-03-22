@@ -31,4 +31,11 @@ public  class CardSlot {
 	public Image GetRenderImage(){
 		return null;
 	}
+	
+	public boolean IsInBounds(int x, int y){
+		return (x >= X && y >= Y && x <= X + Width && y <= Y + Height);
+	}
+	
+	public void OnClick(Player byPlayer){
+	}
 }

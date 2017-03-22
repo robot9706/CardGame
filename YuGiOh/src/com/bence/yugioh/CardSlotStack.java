@@ -20,4 +20,16 @@ public class CardSlotStack extends CardSlot {
 			g.drawImage(Art.CardBack, X - 5 * x, Y - 7 * x, Width, Height, null);
 		}
 	}
+	
+	@Override
+	public void OnClick(Player click){
+		if(click == Owner){
+			Owner.AddCardToHand(new Card());
+		}
+	}
+	
+	@Override
+	public boolean IsInBounds(int x, int y){
+		return (x >= X - 20 && y >= Y - 28 && x <= X + Width && y <= Y + Height);
+	}
 }

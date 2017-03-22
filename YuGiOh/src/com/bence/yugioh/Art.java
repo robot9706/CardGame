@@ -13,6 +13,9 @@ public class Art {
 	public static Image CardBack;
 	public static Image CardFront_Temp;
 	
+	public static Image ArrowRight;
+	public static Image ArrowLeft;
+	
 	public static boolean Load(){
 		try{
 			CardSlot_Hand = LoadImage("slot_hand");
@@ -22,6 +25,9 @@ public class Art {
 			
 			CardBack = LoadImage("card_back");
 			CardFront_Temp = LoadImage("card_front");
+			
+			ArrowRight = LoadImage("arrow_right");
+			ArrowLeft = LoadImage("arrow_left");
 			
 			return true;
 		}
