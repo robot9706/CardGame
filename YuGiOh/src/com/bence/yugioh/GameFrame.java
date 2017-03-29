@@ -4,11 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class GameFrame extends JPanel implements MouseListener {
+public class GameFrame extends JPanel implements MouseListener, MouseMotionListener {
 	private boolean _ready = false;
 	
 	private YuGiOhGame _game;
@@ -20,6 +21,7 @@ public class GameFrame extends JPanel implements MouseListener {
 		_game = new YuGiOhGame(this.getWidth(), this.getHeight(), this);
 		
 		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		
 		_ready = true;
 		return true;
@@ -63,5 +65,14 @@ public class GameFrame extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		_game.OnMouseMove(arg0.getX(), arg0.getY());
 	}
 }

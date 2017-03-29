@@ -2,6 +2,7 @@ package com.bence.yugioh;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -16,12 +17,20 @@ public class YuGiOhGame {
 	private Point2 _playerAHP;
 	private Point2 _playerBHP;
 	
+	private Point2 _lastMousePosition;
+	
+	private boolean _doInspectCard;
+	private Card _cardToInspect;
+	private Rect _cardInspector;
+	
 	private boolean _paused = false;
 	
 	public YuGiOhGame(int w, int h, GameFrame f){
 		_frame = f;
 
 		_slots = new ArrayList<CardSlot>();
+		
+		_lastMousePosition = new Point2(0, 0);
 		
 		_playerA = new Player();
 		_playerB = new Player();
@@ -76,6 +85,15 @@ public class YuGiOhGame {
 		
 		_playerA.AddCardToHand(new Card());
 		_playerA.AddCardToHand(new Card());
+		
+		
+		float right2X = w - (w / 4);
+		float right2W = w / 4;
+		
+		float iwidth = right2W * 0.6f;
+		float iheight = (((float)CardSlot.Height / (float)CardSlot.Width) * iwidth);
+		_cardInspector = new Rect((int)(right2X + (right2W / 2.0f) - (iwidth / 2.0f)), (int)(h - iheight * 1.5f), (int)iwidth, (int)iheight);
+		_doInspectCard = false;
 	}
 	
 	private int GetCardCenterX(int x){
@@ -83,6 +101,9 @@ public class YuGiOhGame {
 	}
 	
 	public void Draw(Graphics g){
+		g.setColor(Color.black);
+		g.setFont(new Font("Arial", Font.BOLD, 16));
+		
 		for(CardSlot s : _slots){
 			s.Draw(g, _playerB);
 		}
@@ -95,9 +116,49 @@ public class YuGiOhGame {
 		g.drawString("Életerõ: " + String.valueOf(_playerA.Health), _playerAHP.X, _playerAHP.Y);
 		g.drawString("Életerõ: " + String.valueOf(_playerB.Health), _playerBHP.X, _playerBHP.Y);
 		
+		if(_doInspectCard){
+			g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
+			
+			FontMetrics m = g.getFontMetrics();
+			int w = m.stringWidth(_cardToInspect.Name);
+			
+			g.drawString(_cardToInspect.Name, _cardInspector.X + (_cardInspector.Width / 2) - (w / 2), _cardInspector.Y + _cardInspector.Height + (int)(m.getHeight() * 1.05f));
+		}
+		
 		if(_paused){
 			g.setColor(new Color(0, 0, 0, 192));	
 			g.fillRect(0, 0, _frame.getWidth(), _frame.getHeight());
+		}
+	}
+	
+	public void OnMouseMove(int x, int y){
+		if(_lastMousePosition.X == x && _lastMousePosition.Y == y){
+			return;
+		}
+		
+		_lastMousePosition.X = x;
+		_lastMousePosition.Y = y;
+		
+		CardSlot inspectedSlot = null;
+		for(CardSlot s : _slots){	
+			if(s.IsInBounds(_lastMousePosition)){
+				inspectedSlot = s;
+				break;
+			}
+		}
+		
+		if(_doInspectCard){
+			if(inspectedSlot == null){
+				_doInspectCard = false;
+				_cardToInspect = null;
+				_frame.Redraw();
+			}
+		}else{
+			if(inspectedSlot != null){
+				_cardToInspect = inspectedSlot.Card;
+				_doInspectCard = (inspectedSlot.Card != null);
+				_frame.Redraw();
+			}
 		}
 	}
 	
@@ -114,6 +175,10 @@ public class YuGiOhGame {
 					change = true;
 					break;
 				}
+			}
+			
+			if(_playerB.HandCardManager.OnClick(x, y)){
+				change = true;
 			}
 			
 			if(change){

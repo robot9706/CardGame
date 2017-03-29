@@ -36,6 +36,10 @@ public  class CardSlot {
 		return (x >= X && y >= Y && x <= X + Width && y <= Y + Height);
 	}
 	
+	public boolean IsInBounds(Point2 p){
+		return (p.X >= X && p.Y >= Y && p.X <= X + Width && p.Y <= Y + Height);
+	}
+	
 	public void OnClick(Player byPlayer){
 	}
 }

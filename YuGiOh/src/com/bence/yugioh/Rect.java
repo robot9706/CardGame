@@ -12,4 +12,8 @@ public class Rect {
 		Width = w;
 		Height = h;
 	}
+	
+	public boolean IsPointInRect(int x, int y){
+		return (x >= X && y >= Y && x <= X + Width && y <= Y + Height);
+	}
 }
