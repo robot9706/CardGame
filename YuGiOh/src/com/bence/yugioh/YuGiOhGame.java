@@ -6,34 +6,46 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import com.bence.yugioh.phases.*;
+import com.bence.yugioh.player.*;
+import com.bence.yugioh.slots.*;
+import com.bence.yugioh.utils.*;
+
 public class YuGiOhGame {
-	private Player _playerA; //Top
-	private Player _playerB; //Bottom - human player
+	public Player ComputerPlayer; //Top
+	public Player HumanPlayer; //Bottom - human player
 	
 	private ArrayList<CardSlot> _slots;
 	
 	private GameFrame _frame;
 	
-	private Point2 _playerAHP;
-	private Point2 _playerBHP;
+	private int _playerAHPY;
+	private int _playerBHPY;
 	
 	private Point2 _lastMousePosition;
+	private Point2 _backgroundSize;
 	
 	private boolean _doInspectCard;
 	private Card _cardToInspect;
 	private Rect _cardInspector;
 	
+	private int _leftColumnCenterX;
+	private int _rightColumnCenterX;
+	
+	private GamePhase _phase;
+	
 	private boolean _paused = false;
 	
 	public YuGiOhGame(int w, int h, GameFrame f){
 		_frame = f;
-
+		_backgroundSize = new Point2(w,h);
+		
 		_slots = new ArrayList<CardSlot>();
 		
 		_lastMousePosition = new Point2(0, 0);
 		
-		_playerA = new Player();
-		_playerB = new Player();
+		ComputerPlayer = new Player();
+		HumanPlayer = new Player();
 		
 		
 		int sideHeight = h / 2;
@@ -44,19 +56,20 @@ public class YuGiOhGame {
 		CardSlot.Height = (int)(cardSize);
 		
 		
-		int leftColumn = (w / 4);
+		int leftColumn = (w / 5);
 		float paddingY = sideHeight / 3;
 		
-		_slots.add(new CardSlotStack(_playerA, GetCardCenterX(leftColumn / 2), (int)(paddingY / 2.0f)));
-		_slots.add(new CardSlotStack(_playerB, GetCardCenterX(leftColumn / 2), (int)(h - CardSlot.Height - paddingY / 2.0f)));
+		_leftColumnCenterX = (int)(leftColumn / 2.0);
 		
-		_playerAHP = new Point2(30, (int)(paddingY * 2.0f));
-		_playerBHP = new Point2(30, (int)(h - paddingY * 2.0f));
+		_slots.add(new CardSlotStack(ComputerPlayer, GetCardCenterX(leftColumn / 2), (int)(paddingY / 2.0f)));
+		_slots.add(new CardSlotStack(HumanPlayer, GetCardCenterX(leftColumn / 2), (int)(h - CardSlot.Height - paddingY / 2.0f)));
 		
+		_playerAHPY = (int)(paddingY * 2.0f);
+		_playerBHPY = (int)(h - paddingY * 2.0f);
 		
-		int rightColumn = (w / 4) * 2;
-			
-		float paddingSize = rightColumn / 5.0f; 
+
+		
+		float paddingSize = CardSlot.Height;//rightColumn / 5.0f; 
 
 		ArrayList<CardSlotHand> playerAHand = new ArrayList<CardSlotHand>();
 		ArrayList<CardSlotHand> playerBHand = new ArrayList<CardSlotHand>();
@@ -65,35 +78,56 @@ public class YuGiOhGame {
 		
 		float rightX = leftColumn + (CardSlot.Width / 2.0f);
 		for(int x = 0;x<5;x++){
-			temp = new CardSlotHand(_playerA, GetCardCenterX((int)(rightX + paddingSize * x)), 0);
+			temp = new CardSlotHand(ComputerPlayer, GetCardCenterX((int)(rightX + paddingSize * x)), 0);
 			playerAHand.add(temp);
 			
 			_slots.add(temp);
-			_slots.add(new CardSlotPlayfield(_playerA, GetCardCenterX((int)(rightX + paddingSize * x)), (int)paddingY, false));
-			_slots.add(new CardSlotPlayfield(_playerA, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(paddingY * 1.915f), true));
+			_slots.add(new CardSlotPlayfield(ComputerPlayer, GetCardCenterX((int)(rightX + paddingSize * x)), (int)paddingY, false));
+			_slots.add(new CardSlotPlayfield(ComputerPlayer, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(paddingY * 1.915f), true));
 			
-			temp = new CardSlotHand(_playerB, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(h - paddingY));
+			temp = new CardSlotHand(HumanPlayer, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(h - paddingY));
 			playerBHand.add(temp);
 			
 			_slots.add(temp);
-			_slots.add(new CardSlotPlayfield(_playerB, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(h - paddingY * 2.0f), false));
-			_slots.add(new CardSlotPlayfield(_playerB, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(h - paddingY * 2.915f), true));
+			_slots.add(new CardSlotPlayfield(HumanPlayer, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(h - paddingY * 2.0f), false));
+			_slots.add(new CardSlotPlayfield(HumanPlayer, GetCardCenterX((int)(rightX + paddingSize * x)), (int)(h - paddingY * 2.915f), true));
 		}
 		
-		_playerA.HandCardManager = new HandCardManager(_playerA, playerAHand);
-		_playerB.HandCardManager = new HandCardManager(_playerB, playerBHand);
+		ComputerPlayer.HandCardManager = new HandCardManager(ComputerPlayer, playerAHand);
+		HumanPlayer.HandCardManager = new HandCardManager(HumanPlayer, playerBHand);
 		
-		_playerA.AddCardToHand(new Card());
-		_playerA.AddCardToHand(new Card());
+		ComputerPlayer.AddCardToHand(new Card());
+		ComputerPlayer.AddCardToHand(new Card());
+		ComputerPlayer.AddCardToHand(new Card());
+		
+		HumanPlayer.AddCardToHand(new Card());
+		HumanPlayer.AddCardToHand(new Card());
+		HumanPlayer.AddCardToHand(new Card());
 		
 		
-		float right2X = w - (w / 4);
-		float right2W = w / 4;
+		float right2X = w - (w / 5);
+		float right2W = w / 5;
 		
-		float iwidth = right2W * 0.6f;
+		_rightColumnCenterX = (int)(right2X + right2W / 2.0);
+		
+		float iwidth = right2W * 0.75f;
 		float iheight = (((float)CardSlot.Height / (float)CardSlot.Width) * iwidth);
 		_cardInspector = new Rect((int)(right2X + (right2W / 2.0f) - (iwidth / 2.0f)), (int)(h - iheight * 1.5f), (int)iwidth, (int)iheight);
 		_doInspectCard = false;
+		
+		
+		
+		StartGame();
+	}
+	
+	private void StartGame(){
+		_phase = new CardPickPhase(this);
+	}
+	
+	public void SetPhase(GamePhase phase){
+		_phase = phase;
+		
+		_frame.Redraw();
 	}
 	
 	private int GetCardCenterX(int x){
@@ -101,20 +135,26 @@ public class YuGiOhGame {
 	}
 	
 	public void Draw(Graphics g){
+		g.drawImage(Art.EgyptBackground, 0, 0, _backgroundSize.X, _backgroundSize.Y, null);
+		
 		g.setColor(Color.black);
 		g.setFont(new Font("Arial", Font.BOLD, 16));
 		
 		for(CardSlot s : _slots){
-			s.Draw(g, _playerB);
+			s.Draw(g, HumanPlayer);
 		}
 		
-		_playerB.HandCardManager.Draw(g);
+		HumanPlayer.HandCardManager.Draw(g);
 		
 		g.setColor(Color.black);
-		g.setFont(new Font("Arial", Font.BOLD, 28));
-		
-		g.drawString("Életerõ: " + String.valueOf(_playerA.Health), _playerAHP.X, _playerAHP.Y);
-		g.drawString("Életerõ: " + String.valueOf(_playerB.Health), _playerBHP.X, _playerBHP.Y);
+		g.setFont(new Font("Arial", Font.BOLD, 24));
+
+		DrawCenteredText(g, "Életerõ: " + String.valueOf(ComputerPlayer.Health), _leftColumnCenterX, _playerAHPY);
+		DrawCenteredText(g, "Életerõ: " + String.valueOf(HumanPlayer.Health), _leftColumnCenterX, _playerBHPY);
+
+		g.setColor(Color.white);
+		DrawCenteredText(g, "Fázis:", _rightColumnCenterX, CardSlot.Height / 2);
+		DrawCenteredText(g, _phase.Name, _rightColumnCenterX, (CardSlot.Height / 4) * 3);
 		
 		if(_doInspectCard){
 			g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
@@ -131,17 +171,26 @@ public class YuGiOhGame {
 		}
 	}
 	
-	public void OnMouseMove(int x, int y){
-		if(_lastMousePosition.X == x && _lastMousePosition.Y == y){
-			return;
-		}
+	private void DrawCenteredText(Graphics g, String text, int centerX, int centerY){
+		FontMetrics m = g.getFontMetrics();
+		int txtWidth = m.stringWidth(text);
+		int txtHeight = m.getHeight();
 		
+		//g.drawString(text, (int)(centerX - (txtWidth / 2.0)), (int)(centerY - (txtHeight / 2.0)));
+		g.drawString(text, (int)(centerX - (txtWidth / 2.0)), centerY);
+	}
+	
+	public void RedrawFrame(){
+		_frame.Redraw();
+	}
+	
+	public void OnMouseMove(int x, int y){
 		_lastMousePosition.X = x;
 		_lastMousePosition.Y = y;
 		
 		CardSlot inspectedSlot = null;
 		for(CardSlot s : _slots){	
-			if(s.IsInBounds(_lastMousePosition)){
+			if(s.IsInBounds(_lastMousePosition) && s.Owner == HumanPlayer){
 				inspectedSlot = s;
 				break;
 			}
@@ -170,19 +219,36 @@ public class YuGiOhGame {
 			
 			for(CardSlot s : _slots){
 				if(s.IsInBounds(x, y)){
-					s.OnClick(_playerB);
+					_phase.OnSlotClick(s, HumanPlayer);
 					
 					change = true;
 					break;
 				}
 			}
 			
-			if(_playerB.HandCardManager.OnClick(x, y)){
+			if(HumanPlayer.HandCardManager.OnClick(x, y)){
 				change = true;
 			}
 			
 			if(change){
 				_frame.Redraw();
+			}
+		}
+	}
+	
+	public void ResetSlotHighlight(){
+		for(int x = 0;x<_slots.size();x++){
+			_slots.get(x).IsHighlighted = true;
+		}
+	}
+	
+	public void SetPlayerSlotHighlight(Player player, CardSlot handSlot, boolean monsterPlacement){
+		for(int x = 0;x<_slots.size();x++){
+			CardSlot s = _slots.get(x);
+			if(s.Owner == player){
+				s.IsHighlighted = (s == handSlot || (s instanceof CardSlotPlayfield && ((CardSlotPlayfield)s).MonsterOnly == monsterPlacement));
+			}else{
+				s.IsHighlighted = false;
 			}
 		}
 	}

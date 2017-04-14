@@ -4,6 +4,7 @@ import java.awt.Image;
 
 public class Card {
 	public String Name;
+	public boolean IsRotated;
 	
 	public Card(){
 		Name = "YOLO";

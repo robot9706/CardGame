@@ -1,6 +1,9 @@
-package com.bence.yugioh;
+package com.bence.yugioh.slots;
 
 import java.awt.Image;
+
+import com.bence.yugioh.Art;
+import com.bence.yugioh.player.Player;
 
 public class CardSlotPlayfield extends CardSlot {
 	public boolean MonsterOnly;
@@ -16,5 +19,9 @@ public class CardSlotPlayfield extends CardSlot {
 			return Art.CardSlot_MagicTrap;
 		
 		return Art.CardSlot_Monsters;
+	}
+	
+	protected Image GetCardImage(Player viewer){
+		return Card.GetFrontImage();
 	}
 }

@@ -1,4 +1,4 @@
-package com.bence.yugioh;
+package com.bence.yugioh.utils;
 
 public class Rect {
 	public int X;

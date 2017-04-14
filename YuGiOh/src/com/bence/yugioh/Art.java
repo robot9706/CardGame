@@ -16,6 +16,8 @@ public class Art {
 	public static Image ArrowRight;
 	public static Image ArrowLeft;
 	
+	public static Image EgyptBackground;
+	
 	public static boolean Load(){
 		try{
 			CardSlot_Hand = LoadImage("slot_hand");
@@ -28,6 +30,8 @@ public class Art {
 			
 			ArrowRight = LoadImage("arrow_right");
 			ArrowLeft = LoadImage("arrow_left");
+			
+			EgyptBackground = LoadImage("background");
 			
 			return true;
 		}

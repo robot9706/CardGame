@@ -1,6 +1,8 @@
-package com.bence.yugioh;
+package com.bence.yugioh.player;
 
 import java.util.ArrayList;
+
+import com.bence.yugioh.Card;
 
 public class Player {
 	public int Health;
@@ -18,6 +20,12 @@ public class Player {
 	public void AddCardToHand(Card c){
 		Hand.add(c);
 		
-		HandCardManager.OnChange();
+		HandCardManager.OnCardAdded();
+	}
+	
+	public void RemoveCardFromHand(Card c){
+		Hand.remove(c);
+		
+		HandCardManager.OnCardRemoved();
 	}
 }

@@ -11,7 +11,8 @@ public class Main {
 						
 		JFrame f = new JFrame("YuGiOh!");
 		f.setContentPane(game);
-		f.setSize(1000, 900);	
+		f.setSize(1000, 900);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);
 		f.setResizable(false);
 		
