@@ -9,6 +9,7 @@ import java.util.Random;
 
 import com.bence.yugioh.cards.AllCards;
 import com.bence.yugioh.cards.Card;
+import com.bence.yugioh.cards.CardMonster;
 import com.bence.yugioh.phases.*;
 import com.bence.yugioh.player.*;
 import com.bence.yugioh.slots.*;
@@ -29,6 +30,7 @@ public class YuGiOhGame {
 	private Point2 _backgroundSize;
 	
 	private boolean _doInspectCard;
+	private boolean _isInspectedCardPlaced;
 	private Card _cardToInspect;
 	private Rect _cardInspector;
 	
@@ -158,11 +160,12 @@ public class YuGiOhGame {
 		
 		if(_doInspectCard){
 			g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
+
+			DrawCenteredText(g, _cardToInspect.Name, _cardInspector.X + (_cardInspector.Width / 2), (int)(_cardInspector.Y + _cardInspector.Height * 1.1f));
 			
-			FontMetrics m = g.getFontMetrics();
-			int w = m.stringWidth(_cardToInspect.Name);
-			
-			g.drawString(_cardToInspect.Name, _cardInspector.X + (_cardInspector.Width / 2) - (w / 2), _cardInspector.Y + _cardInspector.Height + (int)(m.getHeight() * 1.05f));
+			if(_isInspectedCardPlaced && _cardToInspect instanceof CardMonster){
+				DrawCenteredText(g, _cardToInspect.IsRotated ? "Védekezõ" : "Támadó", _cardInspector.X + (_cardInspector.Width / 2), (int)(_cardInspector.Y + _cardInspector.Height * 1.2f));
+			}
 		}
 		
 		if(_paused){
@@ -206,6 +209,7 @@ public class YuGiOhGame {
 			if(inspectedSlot != null){
 				_cardToInspect = inspectedSlot.Card;
 				_doInspectCard = (inspectedSlot.Card != null);
+				_isInspectedCardPlaced = (inspectedSlot instanceof CardSlotPlayfield);
 				_frame.Redraw();
 			}
 		}
@@ -250,6 +254,15 @@ public class YuGiOhGame {
 			}else{
 				s.IsHighlighted = false;
 			}
+		}
+	}
+	
+	public void DamagePlayer(Player p, int damage){
+		p.Health -= damage;
+		if(p.Health <= 0){
+			p.Health = 0;
+			
+			//TODO: Vége
 		}
 	}
 }

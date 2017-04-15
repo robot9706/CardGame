@@ -58,7 +58,7 @@ public class AllCards {
 		
 		Random rnd = new Random();
 		for(int x = 0;x<size;x++){
-			deck.add(Cards.get(rnd.nextInt(Cards.size())));
+			deck.add(Cards.get(rnd.nextInt(Cards.size())).Clone());
 		}
 		
 		return deck;

@@ -17,9 +17,18 @@ public class CardPickPhase extends GamePhase {
 	}
 	
 	public void OnPhaseActivated(){
+		CheckPlayerDeck(Game.ComputerPlayer);
+		CheckPlayerDeck(Game.HumanPlayer);
+		
 		if(Game.ComputerPlayer.Deck.size() == 0 && Game.HumanPlayer.Deck.size() == 0){
 			GotoNextPhase();
 			//TODO: STUFF
+		}
+	}
+	
+	private void CheckPlayerDeck(Player p){
+		if(p.Deck.size() == 0){
+			Game.DamagePlayer(p, 500);
 		}
 	}
 	

@@ -23,15 +23,17 @@ public class TacticsPhase extends GamePhase {
 	public void OnSlotClick(CardSlot slot, Player byPlayer){
 		if(slot.Owner == byPlayer){
 			if(_isPlacingCard){
-				if(slot instanceof CardSlotPlayfield){
-					slot.Card = _cardSource.Card;
+				if(slot instanceof CardSlotPlayfield){ 
+					if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){
+						slot.Card = _cardSource.Card;
 					
-					byPlayer.RemoveCardFromHand(_cardSource.Card);
+						byPlayer.RemoveCardFromHand(_cardSource.Card);
 					
-					_isPlacingCard = false;
+						_isPlacingCard = false;
 					
-					Game.ResetSlotHighlight();
-					Game.RedrawFrame();
+						Game.ResetSlotHighlight();
+						Game.RedrawFrame();
+					}
 				}
 			}else{
 				if(slot instanceof CardSlotHand){
