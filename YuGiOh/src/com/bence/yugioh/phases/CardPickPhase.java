@@ -13,12 +13,14 @@ public class CardPickPhase extends GamePhase {
 	}
 	
 	public void GotoNextPhase(){
-		Game.SetPhase(new TacticsPhase(Game));
+		Game.SetPhase(Game.PhaseTactics);
 	}
 	
 	public void OnPhaseActivated(){
 		CheckPlayerDeck(Game.ComputerPlayer);
 		CheckPlayerDeck(Game.HumanPlayer);
+		
+		Game.ComputerPlayer.GrabCardFromDeck();
 		
 		if(Game.ComputerPlayer.Deck.size() == 0 && Game.HumanPlayer.Deck.size() == 0){
 			GotoNextPhase();

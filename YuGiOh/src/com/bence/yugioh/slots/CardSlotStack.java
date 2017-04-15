@@ -29,11 +29,7 @@ public class CardSlotStack extends CardSlot {
 	@Override
 	public void OnClick(Player click){
 		if(click == Owner){
-			if(Owner.Deck.size() > 0){
-				Card c = Owner.Deck.get(Owner.Deck.size() - 1);
-				Owner.Deck.remove(c);
-				Owner.AddCardToHand(c);
-			}
+			click.GrabCardFromDeck();
 		}
 	}
 	

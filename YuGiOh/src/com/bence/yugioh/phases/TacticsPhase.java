@@ -14,10 +14,15 @@ public class TacticsPhase extends GamePhase {
 	public TacticsPhase(YuGiOhGame game){
 		super(game);
 		
-		Name = "Taktikai fázis";
+		Name = "Taktikai";
 	}
 
+	public boolean CanShowNextPhaseButton(){
+		return true;
+	}
+	
 	public void GotoNextPhase() {
+		Game.SetPhase(Game.PhaseAttack);
 	}
 	
 	public void OnSlotClick(CardSlot slot, Player byPlayer){
@@ -32,15 +37,18 @@ public class TacticsPhase extends GamePhase {
 						_isPlacingCard = false;
 					
 						Game.ResetSlotHighlight();
+						Game.UpdateInspectedSlot();
 						Game.RedrawFrame();
 					}
 				}
 			}else{
 				if(slot instanceof CardSlotHand){
-					_isPlacingCard = true;
-					_cardSource = slot;
+					if(slot.Card != null){
+						_isPlacingCard = true;
+						_cardSource = slot;
 					
-					Game.SetPlayerSlotHighlight(byPlayer, slot, (slot.Card instanceof CardMonster));
+						Game.SetPlayerSlotHighlight(byPlayer, slot, (slot.Card instanceof CardMonster));
+					}
 				}else if(slot instanceof CardSlotPlayfield){
 					CardSlotPlayfield f = (CardSlotPlayfield)slot;
 					if(f.MonsterOnly && f.Card != null){

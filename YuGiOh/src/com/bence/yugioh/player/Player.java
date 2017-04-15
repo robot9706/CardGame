@@ -39,4 +39,12 @@ public class Player {
 			Deck.remove(Deck.size() - 1);
 		}
 	}
+	
+	public void GrabCardFromDeck(){
+		if(Deck.size() > 0){
+			Card c = Deck.get(Deck.size() - 1);
+			Deck.remove(c);
+			AddCardToHand(c);
+		}
+	}
 }

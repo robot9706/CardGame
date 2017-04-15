@@ -15,6 +15,10 @@ public abstract class GamePhase {
 	
 	public abstract void GotoNextPhase();
 	
+	public boolean CanShowNextPhaseButton(){
+		return false;
+	}
+	
 	public void OnPhaseActivated(){
 	}
 	

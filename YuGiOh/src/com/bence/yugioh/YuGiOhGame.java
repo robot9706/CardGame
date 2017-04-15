@@ -16,7 +16,7 @@ import com.bence.yugioh.slots.*;
 import com.bence.yugioh.utils.*;
 
 public class YuGiOhGame {
-	public Player ComputerPlayer; //Top
+	public ComputerPlayer ComputerPlayer; //Top
 	public Player HumanPlayer; //Bottom - human player
 	
 	private ArrayList<CardSlot> _slots;
@@ -39,7 +39,14 @@ public class YuGiOhGame {
 	
 	private GamePhase _phase;
 	
+	public GamePhase PhaseCardPick;
+	public GamePhase PhaseTactics;
+	public GamePhase PhaseAttack;
+	
 	private boolean _paused = false;
+	
+	private ArrayList<UIButton> _buttonList;
+	private UIButton _nextPhaseButton;
 	
 	public YuGiOhGame(int w, int h, GameFrame f){
 		_frame = f;
@@ -49,7 +56,11 @@ public class YuGiOhGame {
 		
 		_lastMousePosition = new Point2(0, 0);
 		
-		ComputerPlayer = new Player();
+		PhaseCardPick = new CardPickPhase(this);
+		PhaseTactics = new TacticsPhase(this);
+		PhaseAttack = new AttackPhase(this);
+		
+		ComputerPlayer = new ComputerPlayer();
 		HumanPlayer = new Player();
 		
 		
@@ -113,6 +124,9 @@ public class YuGiOhGame {
 		_doInspectCard = false;
 		
 		
+		_buttonList = new ArrayList<UIButton>();
+		_buttonList.add(_nextPhaseButton = new UIButton(this, "Következõ", (int)(right2X + (right2W / 2.0f) - (right2W * 0.75f * 0.5f)), (int)paddingY, (int)(right2W * 0.75f), (int)(CardSlot.Height * 0.25f)));
+		
 		
 		StartGame();
 	}
@@ -122,12 +136,14 @@ public class YuGiOhGame {
 		HumanPlayer.InitCards(AllCards.CreateDeck(deckSize));
 		ComputerPlayer.InitCards(AllCards.CreateDeck(deckSize));
 		
-		SetPhase(new CardPickPhase(this));
+		SetPhase(PhaseCardPick);
 	}
 	
 	public void SetPhase(GamePhase phase){
 		_phase = phase;
 		_phase.OnPhaseActivated();
+		
+		_nextPhaseButton.Visible = _phase.CanShowNextPhaseButton();
 		
 		_frame.Redraw();
 	}
@@ -168,29 +184,29 @@ public class YuGiOhGame {
 			}
 		}
 		
+		for(UIButton b : _buttonList){
+			b.Draw(g);
+		}
+		
 		if(_paused){
 			g.setColor(new Color(0, 0, 0, 192));	
 			g.fillRect(0, 0, _frame.getWidth(), _frame.getHeight());
 		}
 	}
 	
-	private void DrawCenteredText(Graphics g, String text, int centerX, int centerY){
+	public static void DrawCenteredText(Graphics g, String text, float centerX, float centerY){
 		FontMetrics m = g.getFontMetrics();
 		int txtWidth = m.stringWidth(text);
-		int txtHeight = m.getHeight();
+		int txtHeight = m.getAscent();
 		
-		//g.drawString(text, (int)(centerX - (txtWidth / 2.0)), (int)(centerY - (txtHeight / 2.0)));
-		g.drawString(text, (int)(centerX - (txtWidth / 2.0)), centerY);
+		g.drawString(text, (int)(centerX - (txtWidth / 2.0f)), (int)(centerY + (txtHeight / 2.0f)));
 	}
 	
 	public void RedrawFrame(){
 		_frame.Redraw();
 	}
 	
-	public void OnMouseMove(int x, int y){
-		_lastMousePosition.X = x;
-		_lastMousePosition.Y = y;
-		
+	public void UpdateInspectedSlot(){
 		CardSlot inspectedSlot = null;
 		for(CardSlot s : _slots){	
 			if(s.IsInBounds(_lastMousePosition) && s.Owner == HumanPlayer){
@@ -215,28 +231,51 @@ public class YuGiOhGame {
 		}
 	}
 	
-	public void OnMouseClick(int x, int y){
-		if(_paused){
+	public void OnMouseMove(int x, int y){
+		if(_lastMousePosition.X != x || _lastMousePosition.Y != y){
+			_lastMousePosition.X = x;
+			_lastMousePosition.Y = y;
+		
+			UpdateInspectedSlot();
 			
-		}else{
-			boolean change = false;
-			
-			for(CardSlot s : _slots){
-				if(s.IsInBounds(x, y)){
-					_phase.OnSlotClick(s, HumanPlayer);
-					
-					change = true;
-					break;
+			for(UIButton b : _buttonList){
+				if(b.OnMouseMove(x, y)){
+					_frame.Redraw();
 				}
 			}
+		}
+	}
+	
+	public void OnMouseClick(int x, int y){
+		boolean change = false;
 			
-			if(HumanPlayer.HandCardManager.OnClick(x, y)){
+		for(CardSlot s : _slots){
+			if(s.IsInBounds(x, y)){
+				_phase.OnSlotClick(s, HumanPlayer);
+				
 				change = true;
+				break;
 			}
+		}
 			
-			if(change){
-				_frame.Redraw();
+		if(HumanPlayer.HandCardManager.OnClick(x, y)){
+			change = true;
+		}
+		
+		if(!change){
+			for(UIButton b : _buttonList){
+				b.OnMouseClick(x, y);
 			}
+		}
+			
+		if(change){
+			_frame.Redraw();
+		}
+	}
+	
+	public void OnUIButtonClick(UIButton btn){
+		if(btn == _nextPhaseButton){
+			_phase.GotoNextPhase();
 		}
 	}
 	
