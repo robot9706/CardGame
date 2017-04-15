@@ -2,11 +2,12 @@ package com.bence.yugioh.player;
 
 import java.util.ArrayList;
 
-import com.bence.yugioh.Card;
+import com.bence.yugioh.cards.Card;
 
 public class Player {
 	public int Health;
 	
+	public ArrayList<Card> Deck;
 	public ArrayList<Card> Hand;
 	
 	public HandCardManager HandCardManager;
@@ -27,5 +28,15 @@ public class Player {
 		Hand.remove(c);
 		
 		HandCardManager.OnCardRemoved();
+	}
+	
+	public void InitCards(ArrayList<Card> deck){
+		Deck = deck;
+		Hand.clear();
+		
+		for(int x = 0;x<3;x++){
+			AddCardToHand(Deck.get(Deck.size() - 1));
+			Deck.remove(Deck.size() - 1);
+		}
 	}
 }

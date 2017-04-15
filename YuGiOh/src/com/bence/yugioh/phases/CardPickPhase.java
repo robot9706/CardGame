@@ -16,6 +16,13 @@ public class CardPickPhase extends GamePhase {
 		Game.SetPhase(new TacticsPhase(Game));
 	}
 	
+	public void OnPhaseActivated(){
+		if(Game.ComputerPlayer.Deck.size() == 0 && Game.HumanPlayer.Deck.size() == 0){
+			GotoNextPhase();
+			//TODO: STUFF
+		}
+	}
+	
 	public void OnSlotClick(CardSlot slot, Player byPlayer){
 		if(slot instanceof CardSlotStack && slot.Owner == Game.HumanPlayer)
 		{

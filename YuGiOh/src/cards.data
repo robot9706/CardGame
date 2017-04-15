@@ -1,0 +1,9 @@
+#Type(Monster/Magic);Name;
+#            Monster;ATK;DEF
+#            Magic  ;Effect
+Monster;Test 1;1;1
+Monster;Test 2;1;2
+Monster;Test 3;2;1
+Magic;Magic 1;asd
+Magic;Magic 2;asd
+Magic;Magic 3;asd

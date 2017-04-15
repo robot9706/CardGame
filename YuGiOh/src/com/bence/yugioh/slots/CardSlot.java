@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
-import com.bence.yugioh.Card;
+import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.phases.GamePhase;
 import com.bence.yugioh.player.Player;
 import com.bence.yugioh.utils.Point2;

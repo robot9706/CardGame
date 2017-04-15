@@ -15,6 +15,9 @@ public abstract class GamePhase {
 	
 	public abstract void GotoNextPhase();
 	
+	public void OnPhaseActivated(){
+	}
+	
 	public void OnSlotClick(CardSlot slot, Player byPlayer){
 	}
 }

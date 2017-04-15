@@ -5,7 +5,10 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Random;
 
+import com.bence.yugioh.cards.AllCards;
+import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.phases.*;
 import com.bence.yugioh.player.*;
 import com.bence.yugioh.slots.*;
@@ -96,14 +99,6 @@ public class YuGiOhGame {
 		ComputerPlayer.HandCardManager = new HandCardManager(ComputerPlayer, playerAHand);
 		HumanPlayer.HandCardManager = new HandCardManager(HumanPlayer, playerBHand);
 		
-		ComputerPlayer.AddCardToHand(new Card());
-		ComputerPlayer.AddCardToHand(new Card());
-		ComputerPlayer.AddCardToHand(new Card());
-		
-		HumanPlayer.AddCardToHand(new Card());
-		HumanPlayer.AddCardToHand(new Card());
-		HumanPlayer.AddCardToHand(new Card());
-		
 		
 		float right2X = w - (w / 5);
 		float right2W = w / 5;
@@ -120,12 +115,17 @@ public class YuGiOhGame {
 		StartGame();
 	}
 	
-	private void StartGame(){
-		_phase = new CardPickPhase(this);
+	private void StartGame(){		
+		int deckSize = 30;
+		HumanPlayer.InitCards(AllCards.CreateDeck(deckSize));
+		ComputerPlayer.InitCards(AllCards.CreateDeck(deckSize));
+		
+		SetPhase(new CardPickPhase(this));
 	}
 	
 	public void SetPhase(GamePhase phase){
 		_phase = phase;
+		_phase.OnPhaseActivated();
 		
 		_frame.Redraw();
 	}

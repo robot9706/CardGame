@@ -1,13 +1,15 @@
-package com.bence.yugioh;
+package com.bence.yugioh.cards;
 
 import java.awt.Image;
 
-public class Card {
+import com.bence.yugioh.Art;
+
+public abstract class Card {
 	public String Name;
 	public boolean IsRotated;
 	
-	public Card(){
-		Name = "YOLO";
+	public Card(String name){
+		Name = name;
 	}
 	
 	public Image GetBackImage(){
@@ -17,4 +19,6 @@ public class Card {
 	public Image GetFrontImage(){
 		return Art.CardFront_Temp;
 	}
+	
+	public abstract Card Clone();
 }

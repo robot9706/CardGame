@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import com.bence.yugioh.Art;
-import com.bence.yugioh.Card;
+import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotHand;
 import com.bence.yugioh.utils.Rect;

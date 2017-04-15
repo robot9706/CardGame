@@ -8,6 +8,8 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
+import com.bence.yugioh.cards.AllCards;
+
 @SuppressWarnings("serial")
 public class GameFrame extends JPanel implements MouseListener, MouseMotionListener {
 	private boolean _ready = false;
@@ -17,11 +19,14 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 	public boolean PerpareGame(){
 		if(!Art.Load())
 			return false;
-		
-		_game = new YuGiOhGame(this.getWidth(), this.getHeight(), this);
-		
+				
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		
+		if(!AllCards.Load())
+			return false;
+		
+		_game = new YuGiOhGame(this.getWidth(), this.getHeight(), this);
 		
 		_ready = true;
 		return true;
