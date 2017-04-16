@@ -26,10 +26,10 @@ public class CardPickPhase extends GamePhase {
 		}
 	}
 	
-	public void OnSlotClick(CardSlot slot, Player byPlayer){
+	public void OnSlotClick(CardSlot slot){
 		if(slot instanceof CardSlotStack)
 		{
-			slot.OnClick(byPlayer);
+			slot.OnClick(Game.HumanPlayer);
 		
 			GotoNextPhase();
 		}

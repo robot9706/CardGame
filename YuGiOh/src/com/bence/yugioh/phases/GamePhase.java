@@ -22,6 +22,6 @@ public abstract class GamePhase {
 	public void OnPhaseActivated(){
 	}
 	
-	public void OnSlotClick(CardSlot slot, Player byPlayer){
+	public void OnSlotClick(CardSlot slot){
 	}
 }

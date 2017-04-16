@@ -25,7 +25,7 @@ public class TacticsPhase extends GamePhase {
 		Game.SetPhase(Game.PhaseAttack, false);
 	}
 	
-	public void OnSlotClick(CardSlot slot, Player byPlayer){
+	public void OnSlotClick(CardSlot slot){
 		if(slot == null){
 			if(_isPlacingCard){
 				_isPlacingCard = false;
@@ -36,11 +36,11 @@ public class TacticsPhase extends GamePhase {
 		}
 		
 		if(_isPlacingCard){
-			if(slot instanceof CardSlotPlayfield){ 
+			if(slot instanceof CardSlotPlayfield && slot.Card == null){ 
 				if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){
 					slot.Card = _cardSource.Card;
 					
-					byPlayer.RemoveCardFromHand(_cardSource.Card);
+					Game.HumanPlayer.RemoveCardFromHand(_cardSource.Card);
 					
 					_isPlacingCard = false;
 					
@@ -55,7 +55,7 @@ public class TacticsPhase extends GamePhase {
 					_isPlacingCard = true;
 					_cardSource = slot;
 					
-					Game.SetPlayerSlotHighlight(byPlayer, slot, (slot.Card instanceof CardMonster));
+					Game.SetPlacementSlotHighlight(slot, (slot.Card instanceof CardMonster));
 				}
 			}else if(slot instanceof CardSlotPlayfield){
 				CardSlotPlayfield f = (CardSlotPlayfield)slot;

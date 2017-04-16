@@ -34,12 +34,6 @@ public  class CardSlot {
 	public void Draw(Graphics g, Player viewer){
 		Graphics2D g2 = (Graphics2D)g;
 		
-		if(!IsHighlighted)
-		{
-			g2.setColor(new Color(0, 0, 0, 180));
-			g2.fillRect(X, Y, Width, Height);
-		}
-		
 		Image i = GetRenderImage();
 		
 		AffineTransform t = new AffineTransform();
@@ -58,6 +52,18 @@ public  class CardSlot {
 			}
 			
 			g2.drawImage(GetCardImage(viewer), t, null);
+			
+			if(!IsHighlighted && Card.IsRotated){
+				g2.setColor(new Color(0, 0, 0, 100));
+				g2.fillRect(X - (Height - Width) / 2, Y + (Height - Width) / 2, (Height - Width) / 2, Width);
+				g2.fillRect(X + Width, Y + (Height - Width) / 2, (Height - Width) / 2, Width);
+			}
+		}
+		
+		if(!IsHighlighted)
+		{
+			g2.setColor(new Color(0, 0, 0, 100));
+			g2.fillRect(X, Y, Width, Height);
 		}
 	}
 	

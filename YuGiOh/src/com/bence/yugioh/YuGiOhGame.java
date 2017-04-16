@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.bence.yugioh.cards.AllCards;
 import com.bence.yugioh.cards.Card;
+import com.bence.yugioh.cards.CardMagic;
 import com.bence.yugioh.cards.CardMonster;
 import com.bence.yugioh.phases.*;
 import com.bence.yugioh.player.*;
@@ -33,6 +34,7 @@ public class YuGiOhGame {
 	private boolean _isInspectedCardPlaced;
 	private Card _cardToInspect;
 	private Rect _cardInspector;
+	private Rect _cardInfoRectangle;
 	
 	private int _leftColumnCenterX;
 	private int _rightColumnCenterX;
@@ -129,6 +131,8 @@ public class YuGiOhGame {
 		float iheight = (((float)CardSlot.Height / (float)CardSlot.Width) * iwidth);
 		_cardInspector = new Rect((int)(right2X + (right2W / 2.0f) - (iwidth / 2.0f)), (int)(h - iheight * 1.5f), (int)iwidth, (int)iheight);
 		_doInspectCard = false;
+		_cardInfoRectangle = new Rect(playerBHand.get(0).X - CardSlot.Width / 2, playerBHand.get(0).Y + CardSlot.Height - CardSlot.Height / 2, 
+				playerBHand.get(playerBHand.size() - 1).X - playerBHand.get(0).X + CardSlot.Width * 2, CardSlot.Height / 2);
 		
 		
 		_buttonList = new ArrayList<UIButton>();
@@ -226,6 +230,13 @@ public class YuGiOhGame {
 					DrawCenteredText(g, _cardToInspect.IsRotated ? "Védekezõ" : "Támadó", _cardInspector.X + (_cardInspector.Width / 2), 
 							baseTextY + font.getAscent() * 2);
 				}
+			}else if(_cardToInspect instanceof CardMagic){
+				g.setColor(new Color(0,0,0,175));
+				g.fillRect(_cardInfoRectangle.X, _cardInfoRectangle.Y, _cardInfoRectangle.Width, _cardInfoRectangle.Height);
+				
+				g.setColor(Color.white);
+				DrawCenteredTextIntoArea(g, "Megnöveli 1000-el minden szörnyed támadási erejét.", new Rect(
+						_cardInfoRectangle.X + 10, _cardInfoRectangle.Y + 10, _cardInfoRectangle.Width - 20, _cardInfoRectangle.Height - 20));
 			}
 		}
 		
@@ -236,6 +247,38 @@ public class YuGiOhGame {
 		if(_paused){
 			g.setColor(new Color(0, 0, 0, 192));	
 			g.fillRect(0, 0, _frame.getWidth(), _frame.getHeight());
+		}
+	}
+	
+	public static void DrawCenteredTextIntoArea(Graphics g, String text, Rect area){
+		FontMetrics m = g.getFontMetrics();
+		
+		ArrayList<String> lines = new ArrayList<String>();
+		
+		String line = "";
+		int lineW = 0;
+		
+		String[] parts = text.split(" ");
+		for(int x = 0;x<parts.length;x++){
+			int partW = m.stringWidth(parts[x] + " ");
+			if(lineW + partW < area.Width){
+				line += (x != 0 ? " " : "") + parts[x];
+				lineW += partW;
+			}else{
+				lines.add(line);
+				line = "";
+				lineW = 0;
+			}
+		}
+		
+		if(line.length() > 0){
+			lines.add(line);
+		}
+		
+		int drawY = area.Y + area.Height / 2 - ((lines.size() / 2) * (m.getAscent()));
+		
+		for(int x = 0;x<lines.size();x++){
+			DrawCenteredText(g, lines.get(x), area.X + area.Width / 2, drawY + m.getAscent() * x);
 		}
 	}
 	
@@ -254,7 +297,7 @@ public class YuGiOhGame {
 	public void UpdateInspectedSlot(){
 		CardSlot inspectedSlot = null;
 		for(CardSlot s : _slots){	
-			if(s.IsInBounds(_lastMousePosition) && s.Owner == HumanPlayer){
+			if(s.IsInBounds(_lastMousePosition) && (s.Owner == HumanPlayer || s instanceof CardSlotPlayfield)){
 				inspectedSlot = s;
 				break;
 			}
@@ -265,6 +308,11 @@ public class YuGiOhGame {
 				_doInspectCard = false;
 				_cardToInspect = null;
 				_frame.Redraw();
+			}else{
+				_cardToInspect = inspectedSlot.Card;
+				_doInspectCard = (inspectedSlot.Card != null);
+				_isInspectedCardPlaced = (inspectedSlot instanceof CardSlotPlayfield);
+				_frame.Redraw();	
 			}
 		}else{
 			if(inspectedSlot != null){
@@ -297,14 +345,14 @@ public class YuGiOhGame {
 		if(PhasePlayer == HumanPlayer){
 			for(CardSlot s : _slots){
 				if(s.IsInBounds(x, y)){
-					_phase.OnSlotClick(s, HumanPlayer);
+					_phase.OnSlotClick(s);
 				
 					change = true;
 					break;
 				}
 			}
 			if(!change){
-				_phase.OnSlotClick(null, HumanPlayer);
+				_phase.OnSlotClick(null);
 			}
 		}
 		
@@ -333,14 +381,21 @@ public class YuGiOhGame {
 		}
 	}
 	
-	public void SetPlayerSlotHighlight(Player player, CardSlot handSlot, boolean monsterPlacement){
-		for(int x = 0;x<_slots.size();x++){
-			CardSlot s = _slots.get(x);
+	public void SetPlacementSlotHighlight(CardSlot handSlot, boolean monsterPlacement){
+		Player player = handSlot.Owner;
+		for(CardSlot s : _slots){
 			if(s.Owner == player){
 				s.IsHighlighted = (s == handSlot || (s instanceof CardSlotPlayfield && ((CardSlotPlayfield)s).MonsterOnly == monsterPlacement));
 			}else{
 				s.IsHighlighted = false;
 			}
+		}
+	}
+	
+	public void SetAttackSlotHighlight(CardSlot sourceSlot){
+		Player player = sourceSlot.Owner;
+		for(CardSlot s : _slots){
+			s.IsHighlighted = (s == sourceSlot || (s.Owner != player && s instanceof CardSlotPlayfield && ((CardSlotPlayfield)s).MonsterOnly && s.Card != null));
 		}
 	}
 	
