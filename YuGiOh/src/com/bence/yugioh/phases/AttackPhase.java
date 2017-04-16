@@ -16,7 +16,7 @@ public class AttackPhase extends GamePhase {
 	}
 	
 	public void GotoNextPhase() {
-		Game.SetPhase(Game.PhaseCardPick);
+		Game.SetPhase(Game.PhaseCardPick, true);
 	}
 	
 	public void OnSlotClick(CardSlot slot, Player byPlayer){

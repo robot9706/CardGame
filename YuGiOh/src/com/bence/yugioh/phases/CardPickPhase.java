@@ -13,19 +13,11 @@ public class CardPickPhase extends GamePhase {
 	}
 	
 	public void GotoNextPhase(){
-		Game.SetPhase(Game.PhaseTactics);
+		Game.SetPhase(Game.PhaseTactics, false);
 	}
 	
 	public void OnPhaseActivated(){
-		CheckPlayerDeck(Game.ComputerPlayer);
-		CheckPlayerDeck(Game.HumanPlayer);
-		
-		Game.ComputerPlayer.GrabCardFromDeck();
-		
-		if(Game.ComputerPlayer.Deck.size() == 0 && Game.HumanPlayer.Deck.size() == 0){
-			GotoNextPhase();
-			//TODO: STUFF
-		}
+		CheckPlayerDeck(Game.PhasePlayer);
 	}
 	
 	private void CheckPlayerDeck(Player p){
@@ -35,7 +27,7 @@ public class CardPickPhase extends GamePhase {
 	}
 	
 	public void OnSlotClick(CardSlot slot, Player byPlayer){
-		if(slot instanceof CardSlotStack && slot.Owner == Game.HumanPlayer)
+		if(slot instanceof CardSlotStack)
 		{
 			slot.OnClick(byPlayer);
 		

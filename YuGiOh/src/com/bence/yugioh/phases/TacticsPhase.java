@@ -22,40 +22,47 @@ public class TacticsPhase extends GamePhase {
 	}
 	
 	public void GotoNextPhase() {
-		Game.SetPhase(Game.PhaseAttack);
+		Game.SetPhase(Game.PhaseAttack, false);
 	}
 	
 	public void OnSlotClick(CardSlot slot, Player byPlayer){
-		if(slot.Owner == byPlayer){
+		if(slot == null){
 			if(_isPlacingCard){
-				if(slot instanceof CardSlotPlayfield){ 
-					if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){
-						slot.Card = _cardSource.Card;
+				_isPlacingCard = false;
+				Game.ResetSlotHighlight();
+				Game.RedrawFrame();
+			}
+			return;
+		}
+		
+		if(_isPlacingCard){
+			if(slot instanceof CardSlotPlayfield){ 
+				if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){
+					slot.Card = _cardSource.Card;
 					
-						byPlayer.RemoveCardFromHand(_cardSource.Card);
+					byPlayer.RemoveCardFromHand(_cardSource.Card);
 					
-						_isPlacingCard = false;
+					_isPlacingCard = false;
 					
-						Game.ResetSlotHighlight();
-						Game.UpdateInspectedSlot();
-						Game.RedrawFrame();
-					}
+					Game.ResetSlotHighlight();
+					Game.UpdateInspectedSlot();
+					Game.RedrawFrame();
 				}
-			}else{
-				if(slot instanceof CardSlotHand){
-					if(slot.Card != null){
-						_isPlacingCard = true;
-						_cardSource = slot;
+			}
+		}else{
+			if(slot instanceof CardSlotHand){
+				if(slot.Card != null){
+					_isPlacingCard = true;
+					_cardSource = slot;
 					
-						Game.SetPlayerSlotHighlight(byPlayer, slot, (slot.Card instanceof CardMonster));
-					}
-				}else if(slot instanceof CardSlotPlayfield){
-					CardSlotPlayfield f = (CardSlotPlayfield)slot;
-					if(f.MonsterOnly && f.Card != null){
-						f.Card.IsRotated = !f.Card.IsRotated;
-						
-						Game.RedrawFrame();
-					}
+					Game.SetPlayerSlotHighlight(byPlayer, slot, (slot.Card instanceof CardMonster));
+				}
+			}else if(slot instanceof CardSlotPlayfield){
+				CardSlotPlayfield f = (CardSlotPlayfield)slot;
+				if(f.MonsterOnly && f.Card != null){
+					f.Card.IsRotated = !f.Card.IsRotated;
+					
+					Game.RedrawFrame();
 				}
 			}
 		}

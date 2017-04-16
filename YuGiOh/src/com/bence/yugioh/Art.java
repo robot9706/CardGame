@@ -16,7 +16,7 @@ public class Art {
 	public static Image ArrowRight;
 	public static Image ArrowLeft;
 	
-	public static Image EgyptBackground;
+	public static Image Background;
 	
 	public static boolean Load(){
 		try{
@@ -31,7 +31,7 @@ public class Art {
 			ArrowRight = LoadImage("arrow_right");
 			ArrowLeft = LoadImage("arrow_left");
 			
-			EgyptBackground = LoadImage("background");
+			Background = LoadImage("background");
 			
 			return true;
 		}

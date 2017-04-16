@@ -1,12 +1,8 @@
 package com.bence.yugioh.slots;
 
 import java.awt.Graphics;
-import java.awt.Image;
 
 import com.bence.yugioh.Art;
-import com.bence.yugioh.cards.Card;
-import com.bence.yugioh.cards.CardMagic;
-import com.bence.yugioh.phases.GamePhase;
 import com.bence.yugioh.player.Player;
 
 public class CardSlotStack extends CardSlot {

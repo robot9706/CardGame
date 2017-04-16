@@ -51,9 +51,6 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		if(_ready && arg0.getButton() == MouseEvent.BUTTON1){
-			_game.OnMouseClick(arg0.getX(), arg0.getY());
-		}
 	}
 
 	@Override
@@ -66,6 +63,9 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
+		if (_ready && arg0.getButton() == MouseEvent.BUTTON1){
+			_game.OnMouseClick(arg0.getX(), arg0.getY());
+		}
 	}
 
 	@Override

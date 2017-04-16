@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Random;
 
 import com.bence.yugioh.cards.AllCards;
 import com.bence.yugioh.cards.Card;
@@ -18,6 +17,7 @@ import com.bence.yugioh.utils.*;
 public class YuGiOhGame {
 	public ComputerPlayer ComputerPlayer; //Top
 	public Player HumanPlayer; //Bottom - human player
+	public Player PhasePlayer;
 	
 	private ArrayList<CardSlot> _slots;
 	
@@ -37,8 +37,8 @@ public class YuGiOhGame {
 	private int _leftColumnCenterX;
 	private int _rightColumnCenterX;
 	
-	private GamePhase _phase;
-	
+	private boolean _skipFirstAttackPhase;
+	private GamePhase _phase;	
 	public GamePhase PhaseCardPick;
 	public GamePhase PhaseTactics;
 	public GamePhase PhaseAttack;
@@ -60,8 +60,8 @@ public class YuGiOhGame {
 		PhaseTactics = new TacticsPhase(this);
 		PhaseAttack = new AttackPhase(this);
 		
-		ComputerPlayer = new ComputerPlayer();
-		HumanPlayer = new Player();
+		ComputerPlayer = new ComputerPlayer(this);
+		HumanPlayer = new Player(this);
 		
 		
 		int sideHeight = h / 2;
@@ -112,6 +112,13 @@ public class YuGiOhGame {
 		ComputerPlayer.HandCardManager = new HandCardManager(ComputerPlayer, playerAHand);
 		HumanPlayer.HandCardManager = new HandCardManager(HumanPlayer, playerBHand);
 		
+		ArrayList<CardSlot> cpuSlots = new ArrayList<CardSlot>();
+		for(CardSlot s : _slots){
+			if(s.Owner == ComputerPlayer){
+				cpuSlots.add(s);
+			}
+		}
+		ComputerPlayer.InitSlots(cpuSlots);
 		
 		float right2X = w - (w / 5);
 		float right2W = w / 5;
@@ -132,20 +139,45 @@ public class YuGiOhGame {
 	}
 	
 	private void StartGame(){		
+		_skipFirstAttackPhase = true;
+		
+		ComputerPlayer.Health = 4000;
+		HumanPlayer.Health = 4000;
+		
 		int deckSize = 30;
 		HumanPlayer.InitCards(AllCards.CreateDeck(deckSize));
 		ComputerPlayer.InitCards(AllCards.CreateDeck(deckSize));
 		
-		SetPhase(PhaseCardPick);
+		PhasePlayer = HumanPlayer;
+		
+		SetPhase(PhaseCardPick, false);
 	}
 	
-	public void SetPhase(GamePhase phase){
+	public void SetPhase(GamePhase phase, boolean swapPlayers){
+		if(phase instanceof AttackPhase && _skipFirstAttackPhase){
+			_skipFirstAttackPhase = false;
+			phase.GotoNextPhase();
+			return;
+		}
+		
+		if(swapPlayers){
+			if(PhasePlayer == HumanPlayer){
+				PhasePlayer = ComputerPlayer;
+			}else{
+				PhasePlayer = HumanPlayer;
+			}
+		}
+		
 		_phase = phase;
 		_phase.OnPhaseActivated();
 		
-		_nextPhaseButton.Visible = _phase.CanShowNextPhaseButton();
+		_nextPhaseButton.Visible = (_phase.CanShowNextPhaseButton() && PhasePlayer == HumanPlayer);
 		
 		_frame.Redraw();
+		
+		if(PhasePlayer == ComputerPlayer){
+			ComputerPlayer.DoPhase(_phase);
+		}
 	}
 	
 	private int GetCardCenterX(int x){
@@ -153,7 +185,7 @@ public class YuGiOhGame {
 	}
 	
 	public void Draw(Graphics g){
-		g.drawImage(Art.EgyptBackground, 0, 0, _backgroundSize.X, _backgroundSize.Y, null);
+		g.drawImage(Art.Background, 0, 0, _backgroundSize.X, _backgroundSize.Y, null);
 		
 		g.setColor(Color.black);
 		g.setFont(new Font("Arial", Font.BOLD, 16));
@@ -171,16 +203,29 @@ public class YuGiOhGame {
 		DrawCenteredText(g, "Életerõ: " + String.valueOf(HumanPlayer.Health), _leftColumnCenterX, _playerBHPY);
 
 		g.setColor(Color.white);
+		
+		DrawCenteredText(g, (PhasePlayer == HumanPlayer) ? "A te köröd" : "Ellenfél köre", _rightColumnCenterX, (CardSlot.Height / 4) * 1);
 		DrawCenteredText(g, "Fázis:", _rightColumnCenterX, CardSlot.Height / 2);
 		DrawCenteredText(g, _phase.Name, _rightColumnCenterX, (CardSlot.Height / 4) * 3);
 		
 		if(_doInspectCard){
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			FontMetrics font = g.getFontMetrics();
+			
 			g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
 
-			DrawCenteredText(g, _cardToInspect.Name, _cardInspector.X + (_cardInspector.Width / 2), (int)(_cardInspector.Y + _cardInspector.Height * 1.1f));
+			int baseTextY = (int)(_cardInspector.Y + _cardInspector.Height * 1.1f);
+			DrawCenteredText(g, _cardToInspect.Name, _cardInspector.X + (_cardInspector.Width / 2), baseTextY);
 			
-			if(_isInspectedCardPlaced && _cardToInspect instanceof CardMonster){
-				DrawCenteredText(g, _cardToInspect.IsRotated ? "Védekezõ" : "Támadó", _cardInspector.X + (_cardInspector.Width / 2), (int)(_cardInspector.Y + _cardInspector.Height * 1.2f));
+			if( _cardToInspect instanceof CardMonster){
+				CardMonster monster = (CardMonster)_cardToInspect;
+				DrawCenteredText(g, "ATK: " + String.valueOf(monster.Attack) + " / DEF: " + String.valueOf(monster.Defense), _cardInspector.X + (_cardInspector.Width / 2), 
+						baseTextY + font.getAscent());
+				
+				if(_isInspectedCardPlaced){
+					DrawCenteredText(g, _cardToInspect.IsRotated ? "Védekezõ" : "Támadó", _cardInspector.X + (_cardInspector.Width / 2), 
+							baseTextY + font.getAscent() * 2);
+				}
 			}
 		}
 		
@@ -249,27 +294,30 @@ public class YuGiOhGame {
 	public void OnMouseClick(int x, int y){
 		boolean change = false;
 			
-		for(CardSlot s : _slots){
-			if(s.IsInBounds(x, y)){
-				_phase.OnSlotClick(s, HumanPlayer);
+		if(PhasePlayer == HumanPlayer){
+			for(CardSlot s : _slots){
+				if(s.IsInBounds(x, y)){
+					_phase.OnSlotClick(s, HumanPlayer);
 				
-				change = true;
-				break;
+					change = true;
+					break;
+				}
+			}
+			if(!change){
+				_phase.OnSlotClick(null, HumanPlayer);
 			}
 		}
-			
+		
 		if(HumanPlayer.HandCardManager.OnClick(x, y)){
 			change = true;
 		}
 		
-		if(!change){
+		if(change){
+			_frame.Redraw();
+		}else{
 			for(UIButton b : _buttonList){
 				b.OnMouseClick(x, y);
 			}
-		}
-			
-		if(change){
-			_frame.Redraw();
 		}
 	}
 	

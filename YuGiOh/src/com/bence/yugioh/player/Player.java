@@ -2,6 +2,7 @@ package com.bence.yugioh.player;
 
 import java.util.ArrayList;
 
+import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.cards.Card;
 
 public class Player {
@@ -12,7 +13,11 @@ public class Player {
 	
 	public HandCardManager HandCardManager;
 		
-	public Player(){
+	public YuGiOhGame Game;
+	
+	public Player(YuGiOhGame owner){
+		Game = owner;
+		
 		Health = 4000;
 		
 		Hand = new ArrayList<Card>();

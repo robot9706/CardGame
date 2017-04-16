@@ -7,7 +7,6 @@ import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
 import com.bence.yugioh.cards.Card;
-import com.bence.yugioh.phases.GamePhase;
 import com.bence.yugioh.player.Player;
 import com.bence.yugioh.utils.Point2;
 
@@ -51,9 +50,11 @@ public  class CardSlot {
 		
 		if(Card != null){
 			if(Card.IsRotated){
-				t.translate(Width / 2.0, Height / 2.0);
-				t.rotate(Math.toRadians(90));
-				t.translate(-Width / 2.0, -Height / 2.0);
+				t.scale(1.0f / ((double)Width / i.getWidth(null)), 1.0f / ((double)Height / i.getHeight(null)));
+				t.translate(Width / 2.0f, Height / 2.0f);
+				t.rotate(Math.toRadians(-90));
+				t.translate(-Width / 2.0f, -Height / 2.0f);
+				t.scale((double)Width / i.getWidth(null), (double)Height / i.getHeight(null));
 			}
 			
 			g2.drawImage(GetCardImage(viewer), t, null);
