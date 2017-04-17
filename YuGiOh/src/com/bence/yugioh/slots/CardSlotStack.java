@@ -31,6 +31,8 @@ public class CardSlotStack extends CardSlot {
 	
 	@Override
 	public boolean IsInBounds(int x, int y){
-		return (x >= X - 20 && y >= Y - 28 && x <= X + Width && y <= Y + Height);
+		int stackSize = Math.min(4, Owner.Deck.size());
+		
+		return (x >= X - 5 * stackSize && y >= Y - 7 * stackSize && x <= X + Width && y <= Y + Height);
 	}
 }

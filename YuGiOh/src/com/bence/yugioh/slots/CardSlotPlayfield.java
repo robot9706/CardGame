@@ -7,11 +7,13 @@ import com.bence.yugioh.player.Player;
 
 public class CardSlotPlayfield extends CardSlot {
 	public boolean MonsterOnly;
+	public boolean Used;
 	
 	public CardSlotPlayfield(Player o, int x, int y, boolean monsterOnly){
 		super(o,x,y);
 		
 		MonsterOnly = monsterOnly;
+		Used = false;
 	}
 	
 	public Image GetRenderImage(){

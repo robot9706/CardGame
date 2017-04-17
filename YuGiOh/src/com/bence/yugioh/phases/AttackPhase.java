@@ -3,7 +3,6 @@ package com.bence.yugioh.phases;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.cards.CardMonster;
-import com.bence.yugioh.player.Player;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotPlayfield;
 
@@ -21,6 +20,10 @@ public class AttackPhase extends GamePhase {
 		return true;
 	}
 	
+	public void OnPhaseActivated(){
+		Game.ResetSlotUsedStates();
+	}
+	
 	public void GotoNextPhase() {
 		Game.SetPhase(Game.PhaseCardPick, true);
 	}
@@ -36,6 +39,9 @@ public class AttackPhase extends GamePhase {
 		}
 		
 		if(slot instanceof CardSlotPlayfield){
+			if(((CardSlotPlayfield)slot).Used)
+				return;
+			
 			Card card = slot.Card;
 			
 			if(_isAttacking){
@@ -45,14 +51,24 @@ public class AttackPhase extends GamePhase {
 					
 					DoAttack(_attackSource, slot);
 					
+					((CardSlotPlayfield)_attackSource).Used = true;
+					
 					Game.RedrawFrame();
 				}
 			}else{
 				if(slot.Owner == Game.HumanPlayer && card instanceof CardMonster && !card.IsRotated){
-					Game.SetAttackSlotHighlight(slot);
+					if(Game.HasMonstersPlaced(Game.ComputerPlayer)){
+						_isAttacking = true;
+						_attackSource = slot;
+						
+						Game.SetAttackSlotHighlight(slot);
+					}else{
+						Game.DamagePlayer(Game.ComputerPlayer, ((CardMonster)card).Attack);
+						slot.Card = null;
+						((CardSlotPlayfield)slot).Used = true;
+					}
+					
 					Game.RedrawFrame();
-					_isAttacking = true;
-					_attackSource = slot;
 				}
 			}
 		}
@@ -62,22 +78,29 @@ public class AttackPhase extends GamePhase {
 		CardMonster from = (CardMonster)source.Card;
 		CardMonster to = (CardMonster)target.Card;
 		
+		int fromATK = from.Attack + Game.GetAdditionalATK(source);
+		int fromDEF = from.Defense + Game.GetAdditionalDEF(source);
+		int toATK = to.Attack + Game.GetAdditionalATK(target); 
+		int toDEF = to.Defense + Game.GetAdditionalDEF(target); 
+		
 		if(target.Card.IsRotated){ //Attack vs Defense
-			if(from.Attack > to.Defense){
+			if(fromATK > toDEF){
 				target.Card = null;
-			}else if(from.Attack < to.Defense){
-				int dif = to.Defense - from.Attack;
+			}else if(fromATK < toDEF){
+				int dif = toDEF - fromATK;
 				Game.DamagePlayer(source.Owner, dif);
 			}
 		}else{ //Attack vs Attack
-			if(from.Attack > to.Attack){
-				int dif = from.Attack - to.Attack;
+			if(fromATK > toATK){
+				int dif = fromATK - toATK;
 				target.Card = null;
 				
 				Game.DamagePlayer(target.Owner, dif);
-			}else if(from.Attack == to.Attack){
+			}else if(fromATK == toATK){
 				source.Card = null;
 				target.Card = null;
+			}else{
+				source.Card = null;
 			}
 		}
 	}

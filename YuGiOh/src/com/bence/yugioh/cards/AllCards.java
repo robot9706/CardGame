@@ -30,12 +30,44 @@ public class AllCards {
 				switch(data[0]){
 				case "Monster":
 					{
-						Cards.add(new CardMonster(data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3])));
+						MonsterSpecial special = null;
+						
+						if(data.length > 4){
+							switch(data[4]){
+							case "AddATK":
+								special = new AddATKAllSpecial(Integer.parseInt(data[5]));
+								break;
+							case "AddDEF":
+								special = new AddDEFAllSpecial(Integer.parseInt(data[5]));
+								break;
+							case "DestroyRandomCard":
+								special = new DestroyRandomCardSpecial();
+								break;
+							case "GrabRandomCard":
+								special = new GrabRandomCardSpecial();
+								break;
+							}
+						}
+						
+						Cards.add(new CardMonster(data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]), special));
 					}
 					break;
 				case "Magic":
 					{
-						Cards.add(new CardMagic(data[1]));
+						MagicEffect fx = null;
+						switch(data[2]){
+						case "HealPlayer":
+							fx = new HealPlayerEffect(Integer.parseInt(data[3]));
+							break;
+						case "AddDEF":
+							fx = new AddDEFEffect(Integer.parseInt(data[3]));
+							break;
+						case "AddATK":
+							fx = new AddATKEffect(Integer.parseInt(data[3]));
+							break;
+						}
+						
+						Cards.add(new CardMagic(data[1], fx));
 					}
 					break;
 				}

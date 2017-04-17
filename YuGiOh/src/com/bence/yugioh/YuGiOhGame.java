@@ -6,6 +6,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import com.bence.yugioh.cards.AddATKAllSpecial;
+import com.bence.yugioh.cards.AddDEFAllSpecial;
 import com.bence.yugioh.cards.AllCards;
 import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.cards.CardMagic;
@@ -32,7 +34,7 @@ public class YuGiOhGame {
 	
 	private boolean _doInspectCard;
 	private boolean _isInspectedCardPlaced;
-	private Card _cardToInspect;
+	private CardSlot _cardSlotToInspect;
 	private Rect _cardInspector;
 	private Rect _cardInfoRectangle;
 	
@@ -142,6 +144,28 @@ public class YuGiOhGame {
 		StartGame();
 	}
 	
+	public ArrayList<CardSlot> GetPlayerUsedSlots(Player player){
+		ArrayList<CardSlot> slots = new ArrayList<CardSlot>();
+		
+		for(CardSlot s : _slots){
+			if(s.Owner == player && s instanceof CardSlotPlayfield && s.Card != null){
+				slots.add(s);
+			}
+		}
+		
+		return slots;
+	}
+	
+	public boolean HasMonstersPlaced(Player player){
+		for(CardSlot s : _slots){
+			if(s.Owner == player && s instanceof CardSlotPlayfield && s.Card != null){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	private void StartGame(){		
 		_skipFirstAttackPhase = true;
 		
@@ -213,30 +237,46 @@ public class YuGiOhGame {
 		DrawCenteredText(g, _phase.Name, _rightColumnCenterX, (CardSlot.Height / 4) * 3);
 		
 		if(_doInspectCard){
-			g.setFont(new Font("Arial", Font.BOLD, 20));
-			FontMetrics font = g.getFontMetrics();
-			
-			g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
-
-			int baseTextY = (int)(_cardInspector.Y + _cardInspector.Height * 1.1f);
-			DrawCenteredText(g, _cardToInspect.Name, _cardInspector.X + (_cardInspector.Width / 2), baseTextY);
-			
-			if( _cardToInspect instanceof CardMonster){
-				CardMonster monster = (CardMonster)_cardToInspect;
-				DrawCenteredText(g, "ATK: " + String.valueOf(monster.Attack) + " / DEF: " + String.valueOf(monster.Defense), _cardInspector.X + (_cardInspector.Width / 2), 
-						baseTextY + font.getAscent());
+			Card inspectedCard = _cardSlotToInspect.Card;
+			if(inspectedCard == null){
+				_doInspectCard = false;
+			}
+			else{
+				g.setFont(new Font("Arial", Font.BOLD, 20));
+				FontMetrics font = g.getFontMetrics();
 				
-				if(_isInspectedCardPlaced){
-					DrawCenteredText(g, _cardToInspect.IsRotated ? "Védekezõ" : "Támadó", _cardInspector.X + (_cardInspector.Width / 2), 
-							baseTextY + font.getAscent() * 2);
+				g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
+	
+				int baseTextY = (int)(_cardInspector.Y + _cardInspector.Height * 1.1f);
+				DrawCenteredText(g, inspectedCard.Name, _cardInspector.X + (_cardInspector.Width / 2), baseTextY);
+				
+				if( inspectedCard instanceof CardMonster){
+					CardMonster monster = (CardMonster)inspectedCard;
+					
+					int addATK = GetAdditionalATK(_cardSlotToInspect);
+					int addDEF = GetAdditionalDEF(_cardSlotToInspect);
+					
+					String monsterData = "ATK: " + String.valueOf(monster.Attack);
+					if(addATK != 0)
+						monsterData += " (+" + String.valueOf(addATK) + ")";
+					monsterData += " / DEF: " + String.valueOf(monster.Defense);
+					if(addDEF != 0)
+						monsterData += " (+" + String.valueOf(addDEF) + ")";
+					
+					DrawCenteredText(g, monsterData, _cardInspector.X + (_cardInspector.Width / 2), baseTextY + font.getAscent());
+					
+					if(_isInspectedCardPlaced){
+						DrawCenteredText(g, inspectedCard.IsRotated ? "Védekezõ" : "Támadó", _cardInspector.X + (_cardInspector.Width / 2), 
+								baseTextY + font.getAscent() * 2);
+						
+					}
+					
+					if(monster.Special != null){
+						DrawInfoBox(g, "Speciális képesség: " + monster.Special.GetDescription());
+					}
+				}else if(inspectedCard instanceof CardMagic){
+					DrawInfoBox(g, ((CardMagic)inspectedCard).Effect.GetDescription());
 				}
-			}else if(_cardToInspect instanceof CardMagic){
-				g.setColor(new Color(0,0,0,175));
-				g.fillRect(_cardInfoRectangle.X, _cardInfoRectangle.Y, _cardInfoRectangle.Width, _cardInfoRectangle.Height);
-				
-				g.setColor(Color.white);
-				DrawCenteredTextIntoArea(g, "Megnöveli 1000-el minden szörnyed támadási erejét.", new Rect(
-						_cardInfoRectangle.X + 10, _cardInfoRectangle.Y + 10, _cardInfoRectangle.Width - 20, _cardInfoRectangle.Height - 20));
 			}
 		}
 		
@@ -248,6 +288,15 @@ public class YuGiOhGame {
 			g.setColor(new Color(0, 0, 0, 192));	
 			g.fillRect(0, 0, _frame.getWidth(), _frame.getHeight());
 		}
+	}
+	
+	private void DrawInfoBox(Graphics g, String text){
+		g.setColor(new Color(0,0,0,175));
+		g.fillRect(_cardInfoRectangle.X, _cardInfoRectangle.Y, _cardInfoRectangle.Width, _cardInfoRectangle.Height);
+		
+		g.setColor(Color.white);
+		DrawCenteredTextIntoArea(g, text, new Rect(
+				_cardInfoRectangle.X + 10, _cardInfoRectangle.Y + 10, _cardInfoRectangle.Width - 20, _cardInfoRectangle.Height - 20));
 	}
 	
 	public static void DrawCenteredTextIntoArea(Graphics g, String text, Rect area){
@@ -262,11 +311,11 @@ public class YuGiOhGame {
 		for(int x = 0;x<parts.length;x++){
 			int partW = m.stringWidth(parts[x] + " ");
 			if(lineW + partW < area.Width){
-				line += (x != 0 ? " " : "") + parts[x];
+				line += (lineW != 0 ? " " : "") + parts[x];
 				lineW += partW;
 			}else{
 				lines.add(line);
-				line = "";
+				line = parts[x];
 				lineW = 0;
 			}
 		}
@@ -306,17 +355,17 @@ public class YuGiOhGame {
 		if(_doInspectCard){
 			if(inspectedSlot == null){
 				_doInspectCard = false;
-				_cardToInspect = null;
+				_cardSlotToInspect = null;
 				_frame.Redraw();
 			}else{
-				_cardToInspect = inspectedSlot.Card;
+				_cardSlotToInspect = inspectedSlot;
 				_doInspectCard = (inspectedSlot.Card != null);
 				_isInspectedCardPlaced = (inspectedSlot instanceof CardSlotPlayfield);
 				_frame.Redraw();	
 			}
 		}else{
 			if(inspectedSlot != null){
-				_cardToInspect = inspectedSlot.Card;
+				_cardSlotToInspect = inspectedSlot;
 				_doInspectCard = (inspectedSlot.Card != null);
 				_isInspectedCardPlaced = (inspectedSlot instanceof CardSlotPlayfield);
 				_frame.Redraw();
@@ -397,6 +446,68 @@ public class YuGiOhGame {
 		for(CardSlot s : _slots){
 			s.IsHighlighted = (s == sourceSlot || (s.Owner != player && s instanceof CardSlotPlayfield && ((CardSlotPlayfield)s).MonsterOnly && s.Card != null));
 		}
+	}
+	
+	public void SetMagicActivateSlotHighlight(CardSlot sourceSlot){
+		Player player = sourceSlot.Owner;
+		for(CardSlot s : _slots){
+			s.IsHighlighted = (s.Owner == player && s instanceof CardSlotPlayfield && ((CardSlotPlayfield)s).MonsterOnly && s.Card != null);
+		}
+	}
+	
+	public void ResetSlotUsedStates(){
+		for(CardSlot s : _slots){
+			if(s instanceof CardSlotPlayfield){
+				((CardSlotPlayfield)s).Used = false;
+			}
+		}
+	}
+	
+	public int GetAdditionalATK(CardSlot sourceSlot){
+		int add = 0;
+		
+		Player player = sourceSlot.Owner;
+		
+		for(CardSlot s : _slots){
+			if(s.Owner == player && s != sourceSlot && s instanceof CardSlotPlayfield){
+				CardSlotPlayfield pf = (CardSlotPlayfield)s;
+				if(pf.MonsterOnly && pf.Card != null){
+					CardMonster cm = (CardMonster)pf.Card;
+					if(cm.Special != null && cm.Special instanceof AddATKAllSpecial){
+						add += ((AddATKAllSpecial)cm.Special).ATK;
+					}
+				}
+			}
+		}
+		
+		return add;
+	}
+	
+	public int GetAdditionalDEF(CardSlot sourceSlot){
+		int add = 0;
+		
+		Player player = sourceSlot.Owner;
+		
+		for(CardSlot s : _slots){
+			if(s.Owner == player && s != sourceSlot && s instanceof CardSlotPlayfield){
+				CardSlotPlayfield pf = (CardSlotPlayfield)s;
+				if(pf.MonsterOnly && pf.Card != null){
+					CardMonster cm = (CardMonster)pf.Card;
+					if(cm.Special != null && cm.Special instanceof AddDEFAllSpecial){
+						add += ((AddDEFAllSpecial)cm.Special).DEF;
+					}
+				}
+			}
+		}
+		
+		return add;
+	}
+	
+	public Player GetOtherPlayer(Player player){
+		if (player == ComputerPlayer)
+			return HumanPlayer;
+		
+		return ComputerPlayer;
 	}
 	
 	public void DamagePlayer(Player p, int damage){
