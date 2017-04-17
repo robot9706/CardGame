@@ -38,6 +38,9 @@ public class TacticsPhase extends GamePhase {
 			return;
 		}
 		
+		if(slot.Owner != Game.HumanPlayer)
+			return;
+		
 		if(_isPlacingCard){
 			if(slot instanceof CardSlotPlayfield && slot.Card == null){ 
 				if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){

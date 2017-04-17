@@ -64,7 +64,6 @@ public class AttackPhase extends GamePhase {
 						Game.SetAttackSlotHighlight(slot);
 					}else{
 						Game.DamagePlayer(Game.ComputerPlayer, ((CardMonster)card).Attack);
-						slot.Card = null;
 						((CardSlotPlayfield)slot).Used = true;
 					}
 					
@@ -75,33 +74,85 @@ public class AttackPhase extends GamePhase {
 	}
 	
 	private void DoAttack(CardSlot source, CardSlot target){
+		GetAttackResult(source, target, Game).DoActions();
+	}
+	
+	public static AttackResult GetAttackResult(CardSlot source, CardSlot target, YuGiOhGame game){
 		CardMonster from = (CardMonster)source.Card;
 		CardMonster to = (CardMonster)target.Card;
 		
-		int fromATK = from.Attack + Game.GetAdditionalATK(source);
-		int fromDEF = from.Defense + Game.GetAdditionalDEF(source);
-		int toATK = to.Attack + Game.GetAdditionalATK(target); 
-		int toDEF = to.Defense + Game.GetAdditionalDEF(target); 
+		int fromATK = from.Attack + game.GetAdditionalATK(source);
+		int toATK = to.Attack + game.GetAdditionalATK(target); 
+		int toDEF = to.Defense + game.GetAdditionalDEF(target); 
 		
-		if(target.Card.IsRotated){ //Attack vs Defense
+		AttackResult res = new AttackResult(game, source, target);
+		
+		if(target.Card.IsRotated) { //Attack vs Defense
+			if(toDEF < fromATK){
+				res.WinnerSlot = source;
+				res.TargetDestroyed = true;
+				res.LoserDamage = 0;
+			}else if(toDEF > fromATK){
+				res.WinnerSlot = target;
+				res.LoserDamage = toDEF - fromATK;
+				res.SourceDestroyed = false;
+				res.TargetDestroyed = false;
+			}else if(toDEF == fromATK){
+				res.WinnerSlot = null;
+				res.LoserDamage = 0;
+				res.TargetDestroyed = false;
+				res.SourceDestroyed = false;
+			}
+		}else{ //Attack vs Attack
+			if(fromATK > toATK){
+				res.WinnerSlot = source;
+				res.TargetDestroyed = true;
+				res.LoserDamage = fromATK - toATK;
+			}else if(fromATK == toATK){
+				res.WinnerSlot = null;
+				res.TargetDestroyed = true;
+				res.SourceDestroyed = true;
+			}else if(fromATK < toATK){
+				res.WinnerSlot = target;
+				res.LoserDamage = toATK - fromATK;
+				res.SourceDestroyed = true;
+			}
+		}
+		
+		/*if(target.Card.IsRotated){ //Attack vs Defense
 			if(fromATK > toDEF){
-				target.Card = null;
+				//target.Card = null;
+				res.WinnerSlot = source;
+				res.TargetDestroyed = true;
 			}else if(fromATK < toDEF){
 				int dif = toDEF - fromATK;
-				Game.DamagePlayer(source.Owner, dif);
+				//game.DamagePlayer(source.Owner, dif);
+				
+				res.WinnerSlot = target;
+				res.LoserDamage = dif;
 			}
 		}else{ //Attack vs Attack
 			if(fromATK > toATK){
 				int dif = fromATK - toATK;
-				target.Card = null;
+				//target.Card = null;
 				
-				Game.DamagePlayer(target.Owner, dif);
+				//game.DamagePlayer(target.Owner, dif);
+				
+				res.WinnerSlot = source;
+				res.LoserDamage = dif;
+				res.TargetDestroyed = true;
 			}else if(fromATK == toATK){
-				source.Card = null;
-				target.Card = null;
+				//source.Card = null;
+				//target.Card = null;
+				res.SourceDestroyed = true;
+				res.TargetDestroyed = true;
 			}else{
-				source.Card = null;
+				//source.Card = null;
+				res.WinnerSlot = target;
+				res.SourceDestroyed = true;
 			}
-		}
+		}*/
+		
+		return res;
 	}
 }

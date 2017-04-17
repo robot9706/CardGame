@@ -23,6 +23,12 @@ public class Player {
 		Hand = new ArrayList<Card>();
 	}
 	
+	public void AddArrayOfCards(ArrayList<Card> cards){
+		for(int x = 0;x<cards.size();x++){
+			AddCardToHand(cards.get(x));
+		}
+	}
+	
 	public void AddCardToHand(Card c){
 		Hand.add(c);
 		
@@ -35,13 +41,16 @@ public class Player {
 		HandCardManager.OnCardRemoved();
 	}
 	
-	public void InitCards(ArrayList<Card> deck){
+	public void InitCards(ArrayList<Card> deck, boolean isStartingDeck){
 		Deck = deck;
-		Hand.clear();
 		
-		for(int x = 0;x<3;x++){
-			AddCardToHand(Deck.get(Deck.size() - 1));
-			Deck.remove(Deck.size() - 1);
+		if(isStartingDeck){
+			Hand.clear();
+			
+			for(int x = 0;x<3;x++){
+				AddCardToHand(Deck.get(Deck.size() - 1));
+				Deck.remove(Deck.size() - 1);
+			}
 		}
 	}
 	

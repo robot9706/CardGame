@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
+import com.bence.yugioh.Art;
 import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.player.Player;
 import com.bence.yugioh.utils.Point2;
@@ -68,7 +69,7 @@ public  class CardSlot {
 	}
 	
 	protected Image GetCardImage(Player viewer){
-		return (viewer == Owner) ? Card.GetFrontImage() : Card.GetBackImage();
+		return (viewer == Owner) ? Card.FrontImage : Art.CardBack;
 	}
 	
 	public Image GetRenderImage(){

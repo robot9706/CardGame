@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
+import com.bence.yugioh.ButtonAction;
 import com.bence.yugioh.YuGiOhGame;
 
 public class UIButton {
@@ -14,12 +15,23 @@ public class UIButton {
 	private YuGiOhGame _game;
 	private boolean _mouseHover = false;
 	
-	public UIButton(YuGiOhGame game, String text, int x, int y, int w, int h){
+	private ButtonAction _action;
+	
+	public UIButton(YuGiOhGame game, String text, int x, int y, int w, int h, ButtonAction action){
 		_game = game;
+		_action = action;
 		
 		Text = text;
 		Rectangle = new Rect(x, y, w, h);
 		Visible = true;
+	}
+	
+	protected Color GetNormalColor(){
+		return new Color(0,0,0,128);
+	}
+	
+	protected Color GetMouseHoverColor(){
+		return new Color(128,128,128,128);
 	}
 	
 	public void Draw(Graphics g){
@@ -27,9 +39,9 @@ public class UIButton {
 			return;
 		
 		if(_mouseHover){
-			g.setColor(new Color(128,128,128,128));
+			g.setColor(GetMouseHoverColor());
 		}else{
-			g.setColor(new Color(0,0,0,128));
+			g.setColor(GetNormalColor());
 		}
 		g.fillRect(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
 		
@@ -53,7 +65,7 @@ public class UIButton {
 	
 	public void OnMouseClick(int x, int y){
 		if(Visible && Rectangle.IsPointInRect(x, y)){
-			_game.OnUIButtonClick(this);
+			_game.OnUIButtonClick(_action);
 		}
 	}
 }

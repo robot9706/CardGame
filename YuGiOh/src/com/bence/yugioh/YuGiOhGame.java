@@ -4,7 +4,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.io.*;
 import java.util.ArrayList;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.bence.yugioh.cards.AddATKAllSpecial;
 import com.bence.yugioh.cards.AddDEFAllSpecial;
@@ -40,6 +45,8 @@ public class YuGiOhGame {
 	
 	private int _leftColumnCenterX;
 	private int _rightColumnCenterX;
+	private int _computerPlayerY;
+	private int _playerY;
 	
 	private boolean _skipFirstAttackPhase;
 	private GamePhase _phase;	
@@ -48,9 +55,18 @@ public class YuGiOhGame {
 	public GamePhase PhaseAttack;
 	
 	private boolean _paused = false;
+	private boolean _gameRunning = false;
 	
 	private ArrayList<UIButton> _buttonList;
 	private UIButton _nextPhaseButton;
+	private UIButton _saveGameButton;
+	private UIButton _exitGameButtonType1;
+	private UIButton _exitGameButtonType2;
+	
+	private boolean _gameOver;
+	private String _gameOverText;
+	
+	private Rect _logoArea;
 	
 	public YuGiOhGame(int w, int h, GameFrame f){
 		_frame = f;
@@ -84,6 +100,9 @@ public class YuGiOhGame {
 		_slots.add(new CardSlotStack(ComputerPlayer, GetCardCenterX(leftColumn / 2), (int)(paddingY / 2.0f)));
 		_slots.add(new CardSlotStack(HumanPlayer, GetCardCenterX(leftColumn / 2), (int)(h - CardSlot.Height - paddingY / 2.0f)));
 		
+		_computerPlayerY = (int)(paddingY / 4.0f);
+		_playerY = (int)(h - paddingY / 4.0f);
+				
 		_playerAHPY = (int)(paddingY * 2.0f);
 		_playerBHPY = (int)(h - paddingY * 2.0f);
 		
@@ -138,10 +157,32 @@ public class YuGiOhGame {
 		
 		
 		_buttonList = new ArrayList<UIButton>();
-		_buttonList.add(_nextPhaseButton = new UIButton(this, "Következõ", (int)(right2X + (right2W / 2.0f) - (right2W * 0.75f * 0.5f)), (int)paddingY, (int)(right2W * 0.75f), (int)(CardSlot.Height * 0.25f)));
+		_buttonList.add(_nextPhaseButton = new UIButton(this, "Következõ", (int)(right2X + (right2W / 2.0f) - (right2W * 0.75f * 0.5f)), (int)paddingY, (int)(right2W * 0.75f), (int)(CardSlot.Height * 0.25f), ButtonAction.NextPhase));
+		_nextPhaseButton.Visible = false;
 		
+		{
+			float logoAspectRatio = ((float)Art.Logo.getHeight(null) / (float)Art.Logo.getWidth(null));
+			
+			int logoWidth = w / 2;
+			int logoHeight = (int)(logoAspectRatio * logoWidth);
+			_logoArea = new Rect((w / 2) - (logoWidth / 2), (h / 6) - (logoHeight / 2), logoWidth, logoHeight);
+			
+			int buttonsWidth = logoWidth / 2;
+			int buttonsHeight = 50;
+			int buttonsX = ((w / 2) - (buttonsWidth / 2));
+			int buttonsY = (h / 10) * 4;
+			
+			_buttonList.add(new UIButtonMenu(this, "Új játék", buttonsX, buttonsY, buttonsWidth, buttonsHeight, ButtonAction.NewGame));
+			_buttonList.add(new UIButtonMenu(this, "Játék betöltése", buttonsX, (int)(buttonsY + buttonsHeight * 1.5f), buttonsWidth, buttonsHeight, ButtonAction.Load));
+			_buttonList.add(_exitGameButtonType1 = new UIButtonMenu(this, "Kilépés", buttonsX, buttonsY + buttonsHeight * 3, buttonsWidth, buttonsHeight, ButtonAction.Exit));
+			_buttonList.add(_saveGameButton = new UIButtonMenu(this, "Játék mentése", buttonsX, buttonsY + buttonsHeight * 3, buttonsWidth, buttonsHeight, ButtonAction.Save));
+			_buttonList.add(_exitGameButtonType2 = new UIButtonMenu(this, "Kilépés", buttonsX, (int)(buttonsY + buttonsHeight * 4.5f), buttonsWidth, buttonsHeight, ButtonAction.Exit));
+			
+			UpdateMenu();
+		}
 		
-		StartGame();
+		_paused = true;
+		_gameOver = false;
 	}
 	
 	public ArrayList<CardSlot> GetPlayerUsedSlots(Player player){
@@ -167,16 +208,27 @@ public class YuGiOhGame {
 	}
 	
 	private void StartGame(){		
+		for(CardSlot s : _slots){
+			s.Card = null;
+		}
+		
 		_skipFirstAttackPhase = true;
 		
 		ComputerPlayer.Health = 4000;
 		HumanPlayer.Health = 4000;
 		
 		int deckSize = 30;
-		HumanPlayer.InitCards(AllCards.CreateDeck(deckSize));
-		ComputerPlayer.InitCards(AllCards.CreateDeck(deckSize));
+		HumanPlayer.InitCards(AllCards.CreateDeck(deckSize), true);
+		ComputerPlayer.InitCards(AllCards.CreateDeck(deckSize), true);
+		
+		ComputerPlayer.HandCardManager.ResetOffset();
+		HumanPlayer.HandCardManager.ResetOffset();
 		
 		PhasePlayer = HumanPlayer;
+		
+		_gameOver = false;
+		_paused = false;
+		_gameRunning = true;
 		
 		SetPhase(PhaseCardPick, false);
 	}
@@ -208,6 +260,10 @@ public class YuGiOhGame {
 		}
 	}
 	
+	private boolean IsAITurn(){
+		return (PhasePlayer == ComputerPlayer);
+	}
+	
 	private int GetCardCenterX(int x){
 		return x - (CardSlot.Width / 2);
 	}
@@ -224,17 +280,20 @@ public class YuGiOhGame {
 		
 		HumanPlayer.HandCardManager.Draw(g);
 		
-		g.setColor(Color.black);
+		g.setColor(Color.white);
 		g.setFont(new Font("Arial", Font.BOLD, 24));
 
 		DrawCenteredText(g, "Életerõ: " + String.valueOf(ComputerPlayer.Health), _leftColumnCenterX, _playerAHPY);
 		DrawCenteredText(g, "Életerõ: " + String.valueOf(HumanPlayer.Health), _leftColumnCenterX, _playerBHPY);
 
-		g.setColor(Color.white);
-		
-		DrawCenteredText(g, (PhasePlayer == HumanPlayer) ? "A te köröd" : "Ellenfél köre", _rightColumnCenterX, (CardSlot.Height / 4) * 1);
-		DrawCenteredText(g, "Fázis:", _rightColumnCenterX, CardSlot.Height / 2);
-		DrawCenteredText(g, _phase.Name, _rightColumnCenterX, (CardSlot.Height / 4) * 3);
+		DrawCenteredText(g, "Számítógép", _leftColumnCenterX, _computerPlayerY);
+		DrawCenteredText(g, "Játékos", _leftColumnCenterX, _playerY);
+	
+		if(_phase != null){
+			DrawCenteredText(g, (PhasePlayer == HumanPlayer) ? "A te köröd" : "Ellenfél köre", _rightColumnCenterX, (CardSlot.Height / 4) * 1);
+			DrawCenteredText(g, "Fázis:", _rightColumnCenterX, CardSlot.Height / 2);
+			DrawCenteredText(g, _phase.Name, _rightColumnCenterX, (CardSlot.Height / 4) * 3);
+		}
 		
 		if(_doInspectCard){
 			Card inspectedCard = _cardSlotToInspect.Card;
@@ -245,10 +304,12 @@ public class YuGiOhGame {
 				g.setFont(new Font("Arial", Font.BOLD, 20));
 				FontMetrics font = g.getFontMetrics();
 				
-				g.drawImage(Art.CardFront_Temp, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
+				g.drawImage(inspectedCard.FrontImage, _cardInspector.X, _cardInspector.Y, _cardInspector.Width, _cardInspector.Height, null);
 	
 				int baseTextY = (int)(_cardInspector.Y + _cardInspector.Height * 1.1f);
 				DrawCenteredText(g, inspectedCard.Name, _cardInspector.X + (_cardInspector.Width / 2), baseTextY);
+				
+				g.setFont(new Font("Arial", Font.BOLD, 16));
 				
 				if( inspectedCard instanceof CardMonster){
 					CardMonster monster = (CardMonster)inspectedCard;
@@ -256,12 +317,12 @@ public class YuGiOhGame {
 					int addATK = GetAdditionalATK(_cardSlotToInspect);
 					int addDEF = GetAdditionalDEF(_cardSlotToInspect);
 					
-					String monsterData = "ATK: " + String.valueOf(monster.Attack);
+					String monsterData = "ATK: " + String.valueOf(monster.Attack + addATK);
 					if(addATK != 0)
-						monsterData += " (+" + String.valueOf(addATK) + ")";
-					monsterData += " / DEF: " + String.valueOf(monster.Defense);
+						monsterData += "*";
+					monsterData += " / DEF: " + String.valueOf(monster.Defense + addDEF);
 					if(addDEF != 0)
-						monsterData += " (+" + String.valueOf(addDEF) + ")";
+						monsterData += "*";
 					
 					DrawCenteredText(g, monsterData, _cardInspector.X + (_cardInspector.Width / 2), baseTextY + font.getAscent());
 					
@@ -281,12 +342,28 @@ public class YuGiOhGame {
 		}
 		
 		for(UIButton b : _buttonList){
-			b.Draw(g);
+			if(!(b instanceof UIButtonMenu)){
+				b.Draw(g);
+			}
 		}
 		
 		if(_paused){
-			g.setColor(new Color(0, 0, 0, 192));	
+			g.setColor(new Color(0, 0, 0, 150));	
 			g.fillRect(0, 0, _frame.getWidth(), _frame.getHeight());
+					
+			g.drawImage(Art.Logo, _logoArea.X, _logoArea.Y, _logoArea.Width, _logoArea.Height, null);
+		
+			for(UIButton b : _buttonList){
+				if (b instanceof UIButtonMenu) {
+					b.Draw(g);
+				}
+			}
+			
+			if(_gameOver){
+				g.setFont(new Font("Arial", Font.BOLD, 48));
+				g.setColor(Color.white);
+				DrawCenteredText(g, _gameOverText, _backgroundSize.X / 2, (_backgroundSize.Y / 6) * 2);
+			}
 		}
 	}
 	
@@ -311,7 +388,7 @@ public class YuGiOhGame {
 		for(int x = 0;x<parts.length;x++){
 			int partW = m.stringWidth(parts[x] + " ");
 			if(lineW + partW < area.Width){
-				line += (lineW != 0 ? " " : "") + parts[x];
+				line += (line.length() == 0 ? "" : " ") + parts[x];
 				lineW += partW;
 			}else{
 				lines.add(line);
@@ -332,6 +409,9 @@ public class YuGiOhGame {
 	}
 	
 	public static void DrawCenteredText(Graphics g, String text, float centerX, float centerY){
+		if(text == null)
+			return;
+		
 		FontMetrics m = g.getFontMetrics();
 		int txtWidth = m.stringWidth(text);
 		int txtHeight = m.getAscent();
@@ -378,11 +458,15 @@ public class YuGiOhGame {
 			_lastMousePosition.X = x;
 			_lastMousePosition.Y = y;
 		
-			UpdateInspectedSlot();
+			if(!_gameOver && !_paused){
+				UpdateInspectedSlot();
+			}
 			
 			for(UIButton b : _buttonList){
-				if(b.OnMouseMove(x, y)){
-					_frame.Redraw();
+				if((b instanceof UIButtonMenu && _paused) || (!(b instanceof UIButtonMenu) && !_paused)){
+					if(b.OnMouseMove(x, y)){
+						_frame.Redraw();
+					}	
 				}
 			}
 		}
@@ -390,37 +474,223 @@ public class YuGiOhGame {
 	
 	public void OnMouseClick(int x, int y){
 		boolean change = false;
-			
-		if(PhasePlayer == HumanPlayer){
-			for(CardSlot s : _slots){
-				if(s.IsInBounds(x, y)){
-					_phase.OnSlotClick(s);
-				
-					change = true;
-					break;
+
+		if(!_gameOver && !_paused){
+			if(PhasePlayer == HumanPlayer){
+				for(CardSlot s : _slots){
+					if(s.IsInBounds(x, y)){
+						_phase.OnSlotClick(s);
+					
+						change = true;
+						break;
+					}
+				}
+				if(!change){
+					_phase.OnSlotClick(null);
 				}
 			}
-			if(!change){
-				_phase.OnSlotClick(null);
+			
+			if(HumanPlayer.HandCardManager.OnClick(x, y)){
+				change = true;
 			}
-		}
-		
-		if(HumanPlayer.HandCardManager.OnClick(x, y)){
-			change = true;
 		}
 		
 		if(change){
 			_frame.Redraw();
 		}else{
 			for(UIButton b : _buttonList){
-				b.OnMouseClick(x, y);
+				if((b instanceof UIButtonMenu && _paused) || (!(b instanceof UIButtonMenu) && !_paused)){
+					b.OnMouseClick(x, y);
+				}
 			}
 		}
 	}
 	
-	public void OnUIButtonClick(UIButton btn){
-		if(btn == _nextPhaseButton){
+	public void OnUIButtonClick(ButtonAction act){
+		switch(act){
+		case NextPhase:
 			_phase.GotoNextPhase();
+			break;
+		case NewGame:
+			StartGame();
+			break;
+		case Load:
+			LoadGame();
+			break;
+		case Save:
+			SaveGame();
+			break;
+		case Exit:
+			System.exit(0);
+			break;
+		}
+	}
+	
+	private void SaveGame() {
+		JFileChooser saveDialog = new JFileChooser();
+		saveDialog.setFileFilter(new FileNameExtensionFilter("YuGiOh save files", "sav"));
+		saveDialog.setCurrentDirectory(new File(System.getProperty("user.home")));
+		if(saveDialog.showSaveDialog(_frame) == JFileChooser.APPROVE_OPTION){
+			File file = saveDialog.getSelectedFile();
+			if(!file.toString().toLowerCase().endsWith("sav")){
+				file = new File(file.toString() + ".sav");
+			}
+			
+			DataOutputStream data = null;
+			try{
+				data = new DataOutputStream(new FileOutputStream(file));
+				
+				data.writeUTF("YuGiOh");
+				
+				data.writeInt(_slots.size());
+				for(int x = 0;x<_slots.size();x++){
+					CardSlot slot = _slots.get(x);
+					data.writeInt(x);
+					if(slot instanceof CardSlotPlayfield){
+						data.writeBoolean(slot.Card != null);
+						if(slot.Card != null){
+							data.writeInt(slot.Card.SaveUID);
+						}
+					}
+				}
+				
+				WriteCardArray(data, ComputerPlayer.Hand);
+				WriteCardArray(data, ComputerPlayer.Deck);
+				
+				WriteCardArray(data, HumanPlayer.Hand);
+				WriteCardArray(data, HumanPlayer.Deck);
+				
+				data.writeInt(HumanPlayer.Health);
+				data.writeInt(ComputerPlayer.Health);
+				
+				data.writeBoolean(PhasePlayer == HumanPlayer);
+				
+				if(_phase == PhaseCardPick){
+					data.writeByte(1);
+				}else if(_phase == PhaseTactics){
+					data.writeByte(2);
+				}if(_phase == PhaseAttack){
+					data.writeByte(3);
+				}
+				
+				data.writeBoolean(_skipFirstAttackPhase);
+				
+				data.close();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}finally{
+				if(data != null){
+					try {
+						data.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	private void WriteCardArray(DataOutputStream data, ArrayList<Card> cards) throws IOException{
+		data.writeInt(cards.size());
+		for(int x = 0;x<cards.size();x++){
+			data.writeInt(cards.get(x).SaveUID);
+		}
+	}
+	
+	private void LoadGame(){
+		JFileChooser openDialog = new JFileChooser();
+		openDialog.setFileFilter(new FileNameExtensionFilter("YuGiOh save files", "sav"));
+		openDialog.setCurrentDirectory(new File(System.getProperty("user.home")));
+		if(openDialog.showOpenDialog(_frame) == JFileChooser.APPROVE_OPTION){
+			DataInputStream data = null;
+			try{
+				data = new DataInputStream(new FileInputStream(openDialog.getSelectedFile()));
+				
+				String header = data.readUTF();
+				if(!header.equalsIgnoreCase("YuGiOh")){
+					throw new Exception("Hibás fejléc!");
+				}
+				
+				int size = data.readInt();
+				for(int i = 0;i<size;i++){
+					int x = data.readInt();
+					CardSlot slot = _slots.get(x);
+					if(slot instanceof CardSlotPlayfield){
+						if(data.readBoolean()){
+							slot.Card = AllCards.GetCardBySaveUID(data.readInt());
+						}else{
+							slot.Card = null;
+						}
+					}
+				}
+				
+				ArrayList<Card> tempList = new ArrayList<Card>();
+				ReadCardList(data, tempList);
+				ComputerPlayer.AddArrayOfCards(tempList);
+				ReadCardList(data, tempList);
+				ComputerPlayer.InitCards(tempList, false);
+								
+				ReadCardList(data, tempList);
+				HumanPlayer.AddArrayOfCards(tempList);
+				ReadCardList(data, tempList);
+				HumanPlayer.InitCards(tempList, false);
+				
+				ComputerPlayer.HandCardManager.ResetOffset();
+				HumanPlayer.HandCardManager.ResetOffset();
+				
+				HumanPlayer.Health = data.readInt();
+				ComputerPlayer.Health = data.readInt();
+				
+				if(data.readBoolean()){
+					PhasePlayer = HumanPlayer;
+				}else{
+					PhasePlayer = ComputerPlayer;
+				}
+				
+				switch(data.readByte()){
+				case 1:
+					SetPhase(PhaseCardPick, false);
+					break;
+				case 2:
+					SetPhase(PhaseTactics, false);
+					break;
+				case 3:
+					SetPhase(PhaseAttack, false);
+					break;
+				}
+				
+				_skipFirstAttackPhase = data.readBoolean();
+				
+				data.close();
+				
+				_gameOver = false;
+				_paused = false;
+				_gameRunning = true;
+				
+				UpdateMenu();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}finally{
+				if(data != null){
+					try {
+						data.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	private void ReadCardList(DataInputStream data, ArrayList<Card> target) throws IOException{
+		target.clear();
+		
+		int count = data.readInt();
+		for(int x = 0;x<count;x++){
+			Card c = AllCards.GetCardBySaveUID(data.readInt());
+			if(c != null){
+				target.add(c);
+			}
 		}
 	}
 	
@@ -452,6 +722,12 @@ public class YuGiOhGame {
 		Player player = sourceSlot.Owner;
 		for(CardSlot s : _slots){
 			s.IsHighlighted = (s.Owner == player && s instanceof CardSlotPlayfield && ((CardSlotPlayfield)s).MonsterOnly && s.Card != null);
+		}
+	}
+	
+	public void SetBotSlotHighlight(CardSlot a, CardSlot b){
+		for(CardSlot s : _slots){
+			s.IsHighlighted = (s == a || s == b);
 		}
 	}
 	
@@ -515,7 +791,37 @@ public class YuGiOhGame {
 		if(p.Health <= 0){
 			p.Health = 0;
 			
-			//TODO: Vége
+			if(!IsAITurn()){
+				OnGameOver();	
+			}
 		}
+	}
+	
+	public void OnGameOver(){
+		_gameOverText = (ComputerPlayer.Health > 0 ? "Vesztettél!" : "Nyertél!");
+		
+		_gameOver = true;
+		_paused = true;
+		_gameRunning = false;
+		
+		_nextPhaseButton.Visible = false;
+		
+		UpdateMenu();
+	}
+	
+	public void TogglePauseMenu(){
+		if(!_gameOver && _gameRunning && !IsAITurn()){
+			_paused = !_paused;
+		
+			UpdateMenu();
+			
+			RedrawFrame();
+		}
+	}
+	
+	private void UpdateMenu() {
+		_exitGameButtonType1.Visible = !_gameRunning;
+		
+		_exitGameButtonType2.Visible = _saveGameButton.Visible = !_exitGameButtonType2.Visible;
 	}
 }

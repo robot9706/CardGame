@@ -2,6 +2,8 @@ package com.bence.yugioh;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -11,7 +13,7 @@ import javax.swing.JPanel;
 import com.bence.yugioh.cards.AllCards;
 
 @SuppressWarnings("serial")
-public class GameFrame extends JPanel implements MouseListener, MouseMotionListener {
+public class GameFrame extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 	private boolean _ready = false;
 	
 	private YuGiOhGame _game;
@@ -20,11 +22,15 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 		if(!Art.Load())
 			return false;
 				
-		this.addMouseListener(this);
-		this.addMouseMotionListener(this);
-		
 		if(!AllCards.Load())
 			return false;
+		
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
+		this.addKeyListener(this);
+		
+		this.setFocusable(true);
+		this.requestFocus();
 		
 		_game = new YuGiOhGame(this.getWidth(), this.getHeight(), this);
 		
@@ -81,5 +87,20 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 		if(_ready){
 			_game.OnMouseMove(arg0.getX(), arg0.getY());
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(_ready && e.getKeyCode() == KeyEvent.VK_ESCAPE){
+			_game.TogglePauseMenu();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
 	}
 }

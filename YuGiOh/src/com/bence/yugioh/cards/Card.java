@@ -7,17 +7,15 @@ import com.bence.yugioh.Art;
 public abstract class Card {
 	public String Name;
 	public boolean IsRotated;
+	public Image FrontImage;
 	
-	public Card(String name){
+	public int Category;
+	
+	public int SaveUID;
+	
+	public Card(String name, int uid){
 		Name = name;
-	}
-	
-	public Image GetBackImage(){
-		return Art.CardBack;
-	}
-	
-	public Image GetFrontImage(){
-		return Art.CardFront_Temp;
+		SaveUID = uid;
 	}
 	
 	public abstract Card Clone();

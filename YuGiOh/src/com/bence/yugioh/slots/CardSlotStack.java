@@ -13,7 +13,7 @@ public class CardSlotStack extends CardSlot {
 	
 	@Override
 	public void Draw(Graphics g, Player viewer){
-		if(Owner.Deck.size() > 0){
+		if(Owner.Deck != null && Owner.Deck.size() > 0){
 			for(int x = 0; x < Math.min(4, Owner.Deck.size()); x++){
 				g.drawImage(Art.CardBack, X - 5 * x, Y - 7 * x, Width, Height, null);
 			}

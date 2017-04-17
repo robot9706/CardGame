@@ -1,5 +1,6 @@
 package com.bence.yugioh.slots;
 
+import java.awt.Graphics;
 import java.awt.Image;
 
 import com.bence.yugioh.Art;
@@ -24,6 +25,14 @@ public class CardSlotPlayfield extends CardSlot {
 	}
 	
 	protected Image GetCardImage(Player viewer){
-		return Card.GetFrontImage();
+		return Card.FrontImage;
+	}
+	
+	public void Draw(Graphics g, Player viewer){
+		super.Draw(g, viewer);
+		
+		if(Used && Card != null){
+			g.drawImage(Art.No, X, Y, Width, Height, null);
+		}
 	}
 }

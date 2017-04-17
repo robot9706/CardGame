@@ -23,6 +23,8 @@ public class CardPickPhase extends GamePhase {
 	private void CheckPlayerDeck(Player p){
 		if(p.Deck.size() == 0){
 			Game.DamagePlayer(p, 500);
+			
+			GotoNextPhase();
 		}
 	}
 	

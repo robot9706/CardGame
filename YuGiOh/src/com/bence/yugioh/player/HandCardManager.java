@@ -27,6 +27,10 @@ public class HandCardManager {
 		_leftArrow = new Rect(slots.get(0).X - CardSlot.Width / 2, slots.get(0).Y + CardSlot.Height / 2 - CardSlot.Height / 4, CardSlot.Width / 2, CardSlot.Height / 2);
 	}
 	
+	public void ResetOffset(){
+		_slotOffset = 0;
+	}
+	
 	public void Draw(Graphics g){
 		if(_player.Hand.size() > 5) {
 			if(CanScrollRight()){
@@ -114,6 +118,8 @@ public class HandCardManager {
 			_handSlots.get(_handSlots.size() - 1).Card = newCard;
 			
 			_slotOffset = _player.Hand.size() - _handSlots.size();
+			if(_slotOffset < 0)
+				_slotOffset = 0;
 		} else {
 			_handSlots.get(emptySlot).Card = newCard;
 		}

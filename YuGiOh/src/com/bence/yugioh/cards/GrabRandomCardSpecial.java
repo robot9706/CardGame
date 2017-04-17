@@ -15,7 +15,7 @@ public class GrabRandomCardSpecial extends MonsterOnPlaceSpecial {
 		Player other = game.GetOtherPlayer(placeSlot.Owner);
 		if (other.Hand.size() > 0){
 			Random rnd = new Random();
-			Card rm = other.Hand.get(rnd.nextInt(other.Hand.size() - 1));
+			Card rm = other.Hand.get(rnd.nextInt(other.Hand.size()));
 			other.RemoveCardFromHand(rm);
 			placeSlot.Owner.AddCardToHand(rm);
 		}
