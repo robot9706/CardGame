@@ -3,7 +3,7 @@ package com.bence.yugioh.cards;
 import java.awt.Image;
 
 /**
- * Varázskártya osztály.
+ * Varazskartya osztaly.
  * @author Bence
  *
  */

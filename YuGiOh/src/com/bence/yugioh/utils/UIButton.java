@@ -13,14 +13,14 @@ import com.bence.yugioh.YuGiOhGame;
  *
  */
 public class UIButton {
-	public String Text; //A gomb szövege.
-	public Rect Rectangle; //Helye a képernyõn.
-	public boolean Visible; //Látzódik?
+	public String Text; //A gomb szovege.
+	public Rect Rectangle; //Helye a kepernyon.
+	public boolean Visible; //Latzodik?
 	
 	private YuGiOhGame _game;
-	private boolean _mouseHover = false; //Rajta van az egér?
+	private boolean _mouseHover = false; //Rajta van az eger?
 	
-	private ButtonAction _action; //Kattintás esemény.
+	private ButtonAction _action; //Kattintas esemeny.
 	
 	public UIButton(YuGiOhGame game, String text, int x, int y, int w, int h, ButtonAction action){
 		_game = game;
@@ -32,14 +32,14 @@ public class UIButton {
 	}
 	
 	/**
-	 * Visszaadja a gomb színét mikor nincs rajta egér.
+	 * Visszaadja a gomb szinet mikor nincs rajta eger.
 	 */
 	protected Color GetNormalColor(){
 		return new Color(0,0,0,128);
 	}
 	
 	/**
-	 * Visszaadja a gomb színét mikor van rajta egér.
+	 * Visszaadja a gomb szinet mikor van rajta eger.
 	 */
 	protected Color GetMouseHoverColor(){
 		return new Color(128,128,128,128);
@@ -49,7 +49,7 @@ public class UIButton {
 	 * Kirajzolja a gombot.
 	 */
 	public void Draw(Graphics g){
-		if(!Visible) //Ha nem látszik akkor nem történik semmi.
+		if(!Visible) //Ha nem latszik akkor nem tortenik semmi.
 			return;
 		
 		if(_mouseHover){
@@ -66,7 +66,7 @@ public class UIButton {
 	}
 	
 	/**
-	 * Egér mozdulás esemény. Visszaadja, hogy történt-e változás.
+	 * Eger mozdulas esemeny. Visszaadja, hogy tortent-e valtozas.
 	 */
 	public boolean OnMouseMove(int x, int y){
 		boolean o = (boolean)_mouseHover;
@@ -81,7 +81,7 @@ public class UIButton {
 	}
 	
 	/**
-	 * Egér kattintás esemény.
+	 * Eger kattintas esemeny.
 	 */
 	public void OnMouseClick(int x, int y){
 		if(Visible && Rectangle.IsPointInRect(x, y)){

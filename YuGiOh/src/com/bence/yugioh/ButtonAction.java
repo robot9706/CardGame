@@ -1,7 +1,7 @@
 package com.bence.yugioh;
 
 /**
- * UI gomb események.
+ * UI gomb esemenyek.
  * @author Bence
  *
  */

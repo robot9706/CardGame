@@ -2,9 +2,10 @@ package com.bence.yugioh.cards;
 
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Varázykártya képesség, mely a használóját gyógyítja.
+ * Varazykartya kepesseg, mely a hasznalojat gyogyitja.
  * @author Bence
  *
  */
@@ -21,7 +22,7 @@ public class HealPlayerEffect implements MagicEffect {
 
 	@Override
 	public String GetDescription() {
-		return "A kártya használója kap " + String.valueOf(_heal) + " életerõ pontot.";
+		return Texts.HealPlayerText.replace("{0}", String.valueOf(_heal));
 	}
 
 	@Override

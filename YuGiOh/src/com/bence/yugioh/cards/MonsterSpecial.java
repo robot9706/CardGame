@@ -1,13 +1,13 @@
 package com.bence.yugioh.cards;
 
 /**
- * Szörnykártya képesség.
+ * Szornykartya kepesseg.
  * @author Bence
  *
  */
 public interface MonsterSpecial {
 	/**
-	 * Visszaadja a képesség leírását.
+	 * Visszaadja a kepesseg leirasat.
 	 * @return
 	 */
 	String GetDescription();

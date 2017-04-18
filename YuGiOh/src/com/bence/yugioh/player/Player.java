@@ -6,7 +6,7 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.cards.Card;
 
 /**
- * Egy játékos.
+ * Egy jatekos.
  * @author Bence
  *
  */
@@ -29,7 +29,7 @@ public class Player {
 	}
 	
 	/**
-	 * Tömbnyi kártyát helyez a játékos kezébe.
+	 * Tombnyi kartyat helyez a jatekos kezebe.
 	 */
 	public void AddArrayOfCards(ArrayList<Card> cards){
 		for(int x = 0;x<cards.size();x++){
@@ -38,7 +38,7 @@ public class Player {
 	}
 	
 	/**
-	 * Egy kártyát helyez a játékos kezébe. 
+	 * Egy kartyat helyez a jatekos kezebe. 
 	 */
 	public void AddCardToHand(Card c){
 		Hand.add(c);
@@ -47,7 +47,7 @@ public class Player {
 	}
 	
 	/**
-	 * Eltávolít egy kártyát a játékos kezébõl.
+	 * Eltavolit egy kartyat a jatekos kezebol.
 	 */
 	public void RemoveCardFromHand(Card c){
 		Hand.remove(c);
@@ -56,7 +56,7 @@ public class Player {
 	}
 	
 	/**
-	 * Elõkészíti a paklit, ha ez egy kezdõpakli, akkor kiveszi belõle az elsõ 3 kártyát.
+	 * Elokesziti a paklit, ha ez egy kezdopakli, akkor kiveszi belole az elso 3 kartyat.
 	 */
 	public void InitCards(ArrayList<Card> deck, boolean isStartingDeck){
 		Deck = deck;
@@ -72,7 +72,7 @@ public class Player {
 	}
 	
 	/**
-	 * Kivesz egy kártyát a pakliból (ha van).
+	 * Kivesz egy kartyat a paklibol (ha van).
 	 */
 	public void GrabCardFromDeck(){
 		if(Deck.size() > 0){

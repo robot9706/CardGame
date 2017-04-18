@@ -11,29 +11,37 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 
 import com.bence.yugioh.cards.AllCards;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * A fõ UI komponens mely a játékot tartalmazza.
+ * A fo UI komponens mely a jatekot tartalmazza.
  * @author Bence
  *
  */
 @SuppressWarnings("serial")
 public class GameFrame extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
-	private boolean _ready = false; //Tárolja, hogy a játék készen áll-e
+	private boolean _ready = false; //Tarolja, hogy a jatek keszen all-e
 	
-	private YuGiOhGame _game; //Maga a játék
+	private YuGiOhGame _game; //Maga a jatek
 	
 	/**
-	 * Elõkészíti a játékot.
+	 * Elokesziti a jatekot.
 	 */
 	public boolean PerpareGame(){
-		if(!Art.Load()) //Betöltöm a grafikákat
+		if(!Art.Load()) //Betoltom a grafikakat
 			return false;
 				
-		if(!AllCards.Load()) //És a kártyákat is
+		if(!AllCards.Load()) //es a kartyakat is
 			return false;
 		
-		//Hozzá adom az esemény kezelõket is
+		try{
+			Texts.Init();
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return false;
+		}
+		
+		//Hozza adom az esemeny kezeloket is
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
@@ -41,32 +49,32 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 		this.setFocusable(true);
 		this.requestFocus();
 		
-		//Létrehozom a játékot
+		//Letrehozom a jatekot
 		_game = new YuGiOhGame(this.getWidth(), this.getHeight(), this);
 		
-		//Ha ide elértem hiba nélkül akkor készen áll a játék
+		//Ha ide elertem hiba nelkul akkor keszen all a jatek
 		_ready = true;
 		return true;
 	}
 	
 	/**
-	 * Ez a függvény hívódik meg, ha grafikát kell megjeleníteni (például redraw esetén)
+	 * Ez a fuggveny hivodik meg, ha grafikat kell megjeleniteni (peldaul redraw eseten)
 	 */
 	@Override
 	protected void paintComponent(Graphics g){
-		if(!_ready) //Lehet, hogy akkor is rajzolni kell mikor még nem áll készen a játék
+		if(!_ready) //Lehet, hogy akkor is rajzolni kell mikor meg nem all keszen a jatek
 			return;
 		
-		//Kitölrök mindent a képrõl
+		//Kitolrok mindent a keprol
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
-		//És rajzolhat a játék
+		//es rajzolhat a jatek
 		_game.Draw(g);
 	}
 	
 	/**
-	 * Kényszerített újra rajzolás
+	 * Kenyszeritett ujra rajzolas
 	 */
 	public void Redraw(){
 		super.invalidate();
@@ -87,11 +95,11 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 	}
 
 	/**
-	 * Egér kattintás esemény-
+	 * Eger kattintas esemeny-
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		if (_ready && arg0.getButton() == MouseEvent.BUTTON1){ //Ha készen áll a játék és bal egér gombbal történt kattintás
+		if (_ready && arg0.getButton() == MouseEvent.BUTTON1){ //Ha keszen all a jatek es bal eger gombbal tortent kattintas
 			_game.OnMouseClick(arg0.getX(), arg0.getY());
 		}
 	}
@@ -105,21 +113,21 @@ public class GameFrame extends JPanel implements MouseListener, MouseMotionListe
 	}
 
 	/**
-	 * Egér mozgás esemény.
+	 * Eger mozgas esemeny.
 	 */
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		if(_ready){ //Ha készen áll a játék
+		if(_ready){ //Ha keszen all a jatek
 			_game.OnMouseMove(arg0.getX(), arg0.getY());
 		}
 	}
 
 	/**
-	 * Billentyûzet gombnyomás esemény.
+	 * Billentyuzet gombnyomas esemeny.
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(_ready && e.getKeyCode() == KeyEvent.VK_ESCAPE){ //Ha készen áll a játék és ESC gomb lenyomása történt
+		if(_ready && e.getKeyCode() == KeyEvent.VK_ESCAPE){ //Ha keszen all a jatek es ESC gomb lenyomasa tortent
 			_game.TogglePauseMenu();
 		}
 	}

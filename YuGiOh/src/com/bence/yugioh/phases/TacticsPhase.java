@@ -7,22 +7,23 @@ import com.bence.yugioh.cards.MonsterOnPlaceSpecial;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotHand;
 import com.bence.yugioh.slots.CardSlotPlayfield;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Taktikai fázis.
+ * Taktikai fazis.
  * @author Bence
  *
  */
 public class TacticsPhase extends GamePhase {
-	//A fázis állapotai.
-	private boolean _isActivatingMagic; //Varázskártyát akarok aktiválni.
-	private boolean _isPlacingCard; //Kártyát akarok a pályára helyezni.
-	private CardSlot _cardSource; //Tárolja, hogy honnan akarok kártyát helyezni a pályára.
+	//A fazis allapotai.
+	private boolean _isActivatingMagic; //Varazskartyat akarok aktivalni.
+	private boolean _isPlacingCard; //Kartyat akarok a palyara helyezni.
+	private CardSlot _cardSource; //Tarolja, hogy honnan akarok kartyat helyezni a palyara.
 	
 	public TacticsPhase(YuGiOhGame game){
 		super(game);
 		
-		Name = "Taktikai";
+		Name = Texts.TacticsPhaseText;
 	}
 
 	public boolean CanShowNextPhaseButton(){
@@ -30,11 +31,11 @@ public class TacticsPhase extends GamePhase {
 	}
 	
 	public void GotoNextPhase() {
-		Game.SetPhase(Game.PhaseAttack, false); //A következõ fázis a támadó fázis, nincs játékos csere
+		Game.SetPhase(Game.PhaseAttack, false); //A kovetkezo fazis a tamado fazis, nincs jatekos csere
 	}
 	
 	public void OnSlotClick(CardSlot slot){
-		if(slot == null){ //Ha nem slotra történt kattintás, akkor visszavonom az aktuális eseményt
+		if(slot == null){ //Ha nem slotra tortent kattintas, akkor visszavonom az aktualis esemenyt
 			if(_isPlacingCard || _isActivatingMagic){
 				_isPlacingCard = false;
 				_isActivatingMagic = false;
@@ -44,17 +45,17 @@ public class TacticsPhase extends GamePhase {
 			return;
 		}
 		
-		if(slot.Owner != Game.HumanPlayer) //Ha nem a saját slotra akar kattintani a játékos akkor nem csinálok semmit
+		if(slot.Owner != Game.HumanPlayer) //Ha nem a sajat slotra akar kattintani a jatekos akkor nem csinalok semmit
 			return;
 		
-		if(_isPlacingCard){ //Ha kártyát akarok a pályára helyezni, megnézem, hogy abba a slot-ba lehet,e
+		if(_isPlacingCard){ //Ha kartyat akarok a palyara helyezni, megnezem, hogy abba a slot-ba lehet,e
 			if(slot instanceof CardSlotPlayfield && slot.Card == null){ 
 				if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){
 					slot.Card = _cardSource.Card;
 					
 					if(slot.Card instanceof CardMonster){
 						CardMonster m = (CardMonster)slot.Card;
-						if(m.Special != null && m.Special instanceof MonsterOnPlaceSpecial){ //Ha a szörnynek van képessége aktiválom
+						if(m.Special != null && m.Special instanceof MonsterOnPlaceSpecial){ //Ha a szornynek van kepessege aktivalom
 							((MonsterOnPlaceSpecial)m.Special).OnActivate(Game, slot);
 						}
 					}
@@ -68,7 +69,7 @@ public class TacticsPhase extends GamePhase {
 					Game.RedrawFrame();
 				}
 			}
-		}else if(_isActivatingMagic){ //Ha varázskártyát akarok aktiválni, megnézem hogy ezen a slot-on lehet-e
+		}else if(_isActivatingMagic){ //Ha varazskartyat akarok aktivalni, megnezem hogy ezen a slot-on lehet-e
 			if(slot instanceof CardSlotPlayfield && slot.Card != null && slot.Card instanceof CardMonster){
 				((CardMagic)_cardSource.Card).Effect.ActivateOnTarget(slot.Card, Game);
 				
@@ -79,7 +80,7 @@ public class TacticsPhase extends GamePhase {
 				Game.RedrawFrame();
 			}
 		}else{
-			if(slot instanceof CardSlotHand){ //Ha kéz slotra kattintok akkor kártyát akarok a pályára helyezni
+			if(slot instanceof CardSlotHand){ //Ha kez slotra kattintok akkor kartyat akarok a palyara helyezni
 				if(slot.Card != null){
 					_isPlacingCard = true;
 					_isActivatingMagic = false;
@@ -88,7 +89,7 @@ public class TacticsPhase extends GamePhase {
 					Game.SetPlacementSlotHighlight(slot, (slot.Card instanceof CardMonster));
 					Game.RedrawFrame();
 				}
-			}else if(slot instanceof CardSlotPlayfield){ //Ha a pályára kattnintok akkor vagy varázslatot aktiválok, vagy szörny kártyát forgatok.
+			}else if(slot instanceof CardSlotPlayfield){ //Ha a palyara kattnintok akkor vagy varazslatot aktivalok, vagy szorny kartyat forgatok.
 				CardSlotPlayfield f = (CardSlotPlayfield)slot;
 				if(f.Card != null){
 					if(f.MonsterOnly){

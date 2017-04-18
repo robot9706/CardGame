@@ -6,12 +6,12 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
- * Osztály mely kezeli a grafikát.
+ * Osztaly mely kezeli a grafikat.
  * @author Bence
  *
  */
 public class Art {
-	//Publikus változók melyek a különféle grafikákat tartalmazzák
+	//Publikus valtozok melyek a kulonfele grafikakat tartalmazzak
 	public static Image CardSlot_Hand;
 	public static Image CardSlot_Monsters;
 	public static Image CardSlot_MagicTrap;
@@ -27,12 +27,12 @@ public class Art {
 	
 	public static Image No;
 	
-	//Ebben a változóban tárolom a kártya grafikákat név alapján, hogy ne keljen egyesével és akár többször betölteni
+	//Ebben a valtozoban tarolom a kartya grafikakat nev alapjan, hogy ne keljen egyesevel es akar tobbszor betolteni
 	private static HashMap<String, Image> _cardImageCache;
 	
 	/**
-	 * Betölti a grafikákat.
-	 * @return true ha minden sikerült, false ha valami hiba történt.
+	 * Betolti a grafikakat.
+	 * @return true ha minden sikerult, false ha valami hiba tortent.
 	 */
 	public static boolean Load(){
 		try{
@@ -56,15 +56,15 @@ public class Art {
 			return true;
 		}
 		catch(Exception ex){
-			ex.printStackTrace(); //Megjelenítem a hibát konzolban is
+			ex.printStackTrace(); //Megjelenitem a hibat konzolban is
 		}
 		
 		return false;
 	}
 	
 	/**
-	 * Betölt egy png képet.
-	 * @param name a kép neve kiterjesztés és elérési út nélkül.
+	 * Betolt egy png kepet.
+	 * @param name a kep neve kiterjesztes es eleresi ut nelkul.
 	 * @return
 	 * @throws Exception
 	 */
@@ -73,16 +73,16 @@ public class Art {
 	}
 	
 	/**
-	 * Betölti egy kártya képét ha az még nem történt meg.
+	 * Betolti egy kartya kepet ha az meg nem tortent meg.
 	 * @param s
 	 * @return
 	 * @throws Exception
 	 */
 	public static Image GetCardImage(String s) throws Exception{
-		if(_cardImageCache.containsKey(s)) //Ha már betöltöttem csak visszaadom
+		if(_cardImageCache.containsKey(s)) //Ha mar betoltottem csak visszaadom
 			return _cardImageCache.get(s);
 	
-		//Ha még nincs betöltve, betöltöm és elrakom
+		//Ha meg nincs betoltve, betoltom es elrakom
 		Image load = LoadImage(s);
 		_cardImageCache.put(s, load);
 		

@@ -5,20 +5,21 @@ import com.bence.yugioh.cards.Card;
 import com.bence.yugioh.cards.CardMonster;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotPlayfield;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Támadás fázis.
+ * Tamadas fazis.
  * @author Bence
  *
  */
 public class AttackPhase extends GamePhase {
-	private boolean _isAttacking = false; //Támadás állapot
+	private boolean _isAttacking = false; //Tamadas allapot
 	private CardSlot _attackSource;
 	
 	public AttackPhase(YuGiOhGame game){
 		super(game);
 		
-		Name = "Támadó fázis";
+		Name = Texts.AttackPhaseNameText;
 	}
 	
 	public boolean CanShowNextPhaseButton(){
@@ -34,7 +35,7 @@ public class AttackPhase extends GamePhase {
 	}
 	
 	public void OnSlotClick(CardSlot slot){
-		if(slot == null){ //Ha nem slot-ra kattintok visszavonom az eseményeket
+		if(slot == null){ //Ha nem slot-ra kattintok visszavonom az esemenyeket
 			if(_isAttacking){
 				_isAttacking = false;
 				Game.ResetSlotHighlight();
@@ -43,13 +44,13 @@ public class AttackPhase extends GamePhase {
 			return;
 		}
 		
-		if(slot instanceof CardSlotPlayfield){ //Ha soltra kattintok megnézem, hogy lehet-e
+		if(slot instanceof CardSlotPlayfield){ //Ha soltra kattintok megnezem, hogy lehet-e
 			if(((CardSlotPlayfield)slot).Used)
 				return;
 			
 			Card card = slot.Card;
 			
-			if(_isAttacking){ //Ha már támadok, megnézem, hogy ezt a slot-ot lehet-e támadni
+			if(_isAttacking){ //Ha mar tamadok, megnezem, hogy ezt a slot-ot lehet-e tamadni
 				if(slot.Owner == Game.ComputerPlayer && card != null){
 					_isAttacking = false;
 					Game.ResetSlotHighlight();
@@ -61,13 +62,13 @@ public class AttackPhase extends GamePhase {
 					Game.RedrawFrame();
 				}
 			}else{
-				if(slot.Owner == Game.HumanPlayer && card instanceof CardMonster && !card.IsRotated){ //Ha nem támadok, megnézem, hogy ezzel lehet-e támadni
+				if(slot.Owner == Game.HumanPlayer && card instanceof CardMonster && !card.IsRotated){ //Ha nem tamadok, megnezem, hogy ezzel lehet-e tamadni
 					if(Game.HasMonstersPlaced(Game.ComputerPlayer)){
 						_isAttacking = true;
 						_attackSource = slot;
 						
 						Game.SetAttackSlotHighlight(slot);
-					}else{ //Ha nincs mit támadni, akkor az ellenfelet támadom közvetlenül
+					}else{ //Ha nincs mit tamadni, akkor az ellenfelet tamadom kozvetlenul
 						Game.DamagePlayer(Game.ComputerPlayer, ((CardMonster)card).Attack);
 						((CardSlotPlayfield)slot).Used = true;
 					}
@@ -79,14 +80,14 @@ public class AttackPhase extends GamePhase {
 	}
 	
 	/**
-	 * Végrehajt egy támadást.
+	 * Vegrehajt egy tamadast.
 	 */
 	private void DoAttack(CardSlot source, CardSlot target){
 		GetAttackResult(source, target, Game).DoActions();
 	}
 	
 	/**
-	 * Kiszámolja egy támadás eredményét-
+	 * Kiszamolja egy tamadas eredmenyet-
 	 */
 	public static AttackResult GetAttackResult(CardSlot source, CardSlot target, YuGiOhGame game){
 		CardMonster from = (CardMonster)source.Card;

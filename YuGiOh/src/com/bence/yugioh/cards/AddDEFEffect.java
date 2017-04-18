@@ -2,9 +2,10 @@ package com.bence.yugioh.cards;
 
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Varázs kártya képesség, mely egy kiválasztott szörny DEF-jét véglegesen megnöveli
+ * Varazs kartya kepesseg, mely egy kivalasztott szorny DEF-jet veglegesen megnoveli
  * @author Bence
  *
  */
@@ -20,7 +21,7 @@ public class AddDEFEffect implements MagicEffect {
 	}
 
 	public String GetDescription() {
-		return "Egy kiválasztott szörnynek ad " + String.valueOf(_def) + " védekezési erõt.";
+		return Texts.AddDEFEffectText.replace("{0}", String.valueOf(_def));
 	}
 
 	@Override

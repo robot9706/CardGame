@@ -4,28 +4,28 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 
 /**
- * Varázskártya képesség.
+ * Varazskartya kepesseg.
  * @author Bence
  *
  */
 public interface MagicEffect {
 	/**
-	 * Megmondja, hogy kell-e cél kártya.
+	 * Megmondja, hogy kell-e cel kartya.
 	 */
 	boolean RequiresTarget();
 	
 	/**
-	 * Visszaadja a kártya leírását.
+	 * Visszaadja a kartya leirasat.
 	 */
 	String GetDescription();
 	
 	/**
-	 * Aktiválás cél nélkül.
+	 * Aktivalas cel nelkul.
 	 */
 	void Activate(YuGiOhGame game, Player by);
 	
 	/**
-	 * Aktiválás célon.
+	 * Aktivalas celon.
 	 */
 	void ActivateOnTarget(Card target, YuGiOhGame game);
 }

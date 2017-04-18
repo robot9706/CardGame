@@ -4,20 +4,20 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.slots.CardSlot;
 
 /**
- * Szröny képesség, mely a szörny pályára helyezésekor aktiválódik.
+ * Szrony kepesseg, mely a szorny palyara helyezesekor aktivalodik.
  * @author Bence
  *
  */
 public abstract class MonsterOnPlaceSpecial implements MonsterSpecial {
 	/**
-	 * Visszaadja a képesség leírását.
+	 * Visszaadja a kepesseg leirasat.
 	 */
 	public String GetDescription() {
 		return "???";
 	}
 
 	/**
-	 * A kártya lehelyezésekor hívodik meg.
+	 * A kartya lehelyezesekor hivodik meg.
 	 */
 	public abstract void OnActivate(YuGiOhGame game, CardSlot placeSlot);
 }

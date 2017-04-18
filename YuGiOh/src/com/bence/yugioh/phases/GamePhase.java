@@ -4,7 +4,7 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.slots.CardSlot;
 
 /**
- * Egy játék fázis.
+ * Egy jatek fazis.
  * @author Bence
  *
  */
@@ -18,24 +18,24 @@ public abstract class GamePhase {
 	}
 	
 	/**
-	 * A következõ fázist hívja meg.
+	 * A kovetkezo fazist hivja meg.
 	 */
 	public abstract void GotoNextPhase();
 	
 	/**
-	 * Slot kattintás esemény.
+	 * Slot kattintas esemeny.
 	 */
 	public abstract void OnSlotClick(CardSlot slot);
 	
 	/**
-	 * Visszaadja, hogy a következõ fázis gombot meg lehet-e jeleníteni.
+	 * Visszaadja, hogy a kovetkezo fazis gombot meg lehet-e jeleniteni.
 	 */
 	public boolean CanShowNextPhaseButton(){
 		return false;
 	}
 	
 	/**
-	 * A fázis kezdetekor hívodik meg.
+	 * A fazis kezdetekor hivodik meg.
 	 */
 	public void OnPhaseActivated(){
 	}

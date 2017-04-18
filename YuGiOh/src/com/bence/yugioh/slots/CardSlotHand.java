@@ -6,7 +6,7 @@ import com.bence.yugioh.Art;
 import com.bence.yugioh.player.Player;
 
 /**
- * Slot, mely egy játékos kezében lévõ kártyát tartalmaz.
+ * Slot, mely egy jatekos kezeben levo kartyat tartalmaz.
  * @author Bence
  *
  */

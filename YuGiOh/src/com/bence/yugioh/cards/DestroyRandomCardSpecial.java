@@ -5,15 +5,16 @@ import java.util.Random;
 
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.slots.CardSlot;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Szörnykártya képesség, mely elpusztít egy véletlenszerû ellenséges kártyát.
+ * Szornykartya kepesseg, mely elpusztit egy veletlenszeru ellenseges kartyat.
  * @author Bence
  *
  */
 public class DestroyRandomCardSpecial extends MonsterOnPlaceSpecial {
 	public String GetDescription(){
-		return "Az ellenfél egy véletlenszerû kártyája megsemmisül. A kártya lehelyezésekor aktiválódik";
+		return Texts.DestroyCardText;
 	}
 	
 	public void OnActivate(YuGiOhGame game, CardSlot placeSlot) {

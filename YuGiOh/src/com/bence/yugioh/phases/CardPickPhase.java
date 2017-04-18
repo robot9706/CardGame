@@ -4,9 +4,10 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotStack;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Kártyahúzás fázis.
+ * Kartyahuzas fazis.
  * @author Bence
  *
  */
@@ -14,7 +15,7 @@ public class CardPickPhase extends GamePhase {
 	public CardPickPhase(YuGiOhGame game){
 		super(game);
 		
-		Name = "Kártya húzás";
+		Name = Texts.CardPickPhaseText;
 	}
 	
 	public void GotoNextPhase(){
@@ -26,7 +27,7 @@ public class CardPickPhase extends GamePhase {
 	}
 	
 	/**
-	 * Megnézi, hogy egy játékosnak van-e kártyája a paklijába, ha nincs 500 sebzést kap.
+	 * Megnezi, hogy egy jatekosnak van-e kartyaja a paklijaba, ha nincs 500 sebzest kap.
 	 */
 	private void CheckPlayerDeck(Player p){
 		if(p.Deck.size() == 0){

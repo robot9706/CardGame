@@ -7,7 +7,7 @@ import com.bence.yugioh.Art;
 import com.bence.yugioh.player.Player;
 
 /**
- * Slot, mely egy pályára helyezett kártyát tartalmaz.
+ * Slot, mely egy palyara helyezett kartyat tartalmaz.
  * @author Bence
  *
  */
@@ -36,7 +36,7 @@ public class CardSlotPlayfield extends CardSlot {
 	public void Draw(Graphics g, Player viewer){
 		super.Draw(g, viewer);
 		
-		if(Used && Card != null){ //Ha a kártya már használva volt, "kihúzom" a kártyát
+		if(Used && Card != null){ //Ha a kartya mar hasznalva volt, "kihuzom" a kartyat
 			g.drawImage(Art.No, X, Y, Width, Height, null);
 		}
 	}

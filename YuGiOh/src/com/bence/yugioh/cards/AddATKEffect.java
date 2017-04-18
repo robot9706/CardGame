@@ -2,9 +2,10 @@ package com.bence.yugioh.cards;
 
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Varázs kártya képesség, mely egy kiválasztott szörny ATK-ját véglegesen megnöveli
+ * Varazs kartya kepesseg, mely egy kivalasztott szorny ATK-jat veglegesen megnoveli
  * @author Bence
  *
  */
@@ -20,7 +21,7 @@ public class AddATKEffect implements MagicEffect {
 	}
 
 	public String GetDescription() {
-		return "Egy kiválasztott szörnynek ad " + String.valueOf(_atk) + " támadási erõt.";
+		return Texts.AddATKEffectText.replace("{0}", String.valueOf(_atk));
 	}
 
 	@Override

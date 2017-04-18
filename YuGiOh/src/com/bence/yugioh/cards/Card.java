@@ -3,7 +3,7 @@ package com.bence.yugioh.cards;
 import java.awt.Image;
 
 /**
- * Kártya alaposztály.
+ * Kartya alaposztaly.
  *
  */
 public abstract class Card {
@@ -21,7 +21,7 @@ public abstract class Card {
 	}
 	
 	/**
-	 * Ad egy klónt a kártyáról.
+	 * Ad egy klont a kartyarol.
 	 */
 	public abstract Card Clone();
 }

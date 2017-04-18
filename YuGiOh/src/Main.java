@@ -4,38 +4,38 @@ import javax.swing.JOptionPane;
 import com.bence.yugioh.*;
 
 /**
- * A Main osztály.
+ * A Main osztaly.
  * @author Bence
  *
  */
 public class Main {
 	
 	/**
-	 * A belépési pont.
+	 * A belepesi pont.
 	 */
 	public static void main(String[] args){
-		//Készítek egy ablakot
+		//Keszitek egy ablakot
 		JFrame f = new JFrame("YuGiOh!");
 		
-		//és egy JPanel-t ami a játékot tartalmazza
+		//es egy JPanel-t ami a jatekot tartalmazza
 		GameFrame game = new GameFrame();
 		
-		//Hozzáadom a játék komponenst az ablakhoz és beállítom az ablak paramétereit
+		//Hozzaadom a jatek komponenst az ablakhoz es beallitom az ablak parametereit
 		f.add(game);
 		f.setSize(1000, 900);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);
 		f.setResizable(false);
 		
-		//Elõkészítem a játékot, ha nem sikerül kiírom a felhasználónak és kilépek
+		//Elokeszitem a jatekot, ha nem sikerul kiirom a felhasznalonak es kilepek
 		if(!game.PerpareGame()){
-			JOptionPane.showMessageDialog(null, "Hiba a betöltés közben!");
+			JOptionPane.showMessageDialog(null, "Hiba a betoltes kozben!");
 				
 			System.exit(-1);
 			return;
 		}
 		
-		//Kirajzoltatom a játékot
+		//Kirajzoltatom a jatekot
 		game.Redraw();
 	}
 }

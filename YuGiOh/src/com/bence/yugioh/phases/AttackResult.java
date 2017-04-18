@@ -4,21 +4,21 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.slots.CardSlot;
 
 /**
- * Egy támadás eredményét tárolja.
+ * Egy tamadas eredmenyet tarolja.
  * @author Bence
  *
  */
 public class AttackResult {
 	public YuGiOhGame Game;
 	
-	public CardSlot Source = null; //A forrás slot
-	public CardSlot Target  = null; //A cél slot
+	public CardSlot Source = null; //A forras slot
+	public CardSlot Target  = null; //A cel slot
 	
 	public CardSlot WinnerSlot = null; //A nyertes slot
-	public int LoserDamage = 0; //A vesztes ennyi életet veszít
+	public int LoserDamage = 0; //A vesztes ennyi eletet veszit
 	
-	public boolean SourceDestroyed = false; //A forrás elpusztul?
-	public boolean TargetDestroyed = false; //A cél elpusztul?
+	public boolean SourceDestroyed = false; //A forras elpusztul?
+	public boolean TargetDestroyed = false; //A cel elpusztul?
 	
 	public AttackResult(YuGiOhGame game, CardSlot source, CardSlot target){
 		Game = game;
@@ -28,7 +28,7 @@ public class AttackResult {
 	}
 	
 	/**
-	 * Elvégzi a támadás következményeit.
+	 * Elvegzi a tamadas kovetkezmenyeit.
 	 */
 	public void DoActions(){
 		if(SourceDestroyed){

@@ -1,7 +1,9 @@
 package com.bence.yugioh.cards;
 
+import com.bence.yugioh.utils.Texts;
+
 /**
- * Speciális szörny képesség mely minden szörnynek plusz ATK-t ad.
+ * Specialis szorny kepesseg mely minden szornynek plusz ATK-t ad.
  * @author Bence
  *
  */
@@ -13,6 +15,6 @@ public class AddATKAllSpecial implements MonsterSpecial {
 	}
 	
 	public String GetDescription() {
-		return "Minden a pályán lévõ szörnynek ad " + String.valueOf(ATK) + " támadási erõt.";
+		return Texts.AddATKAllText.replace("{0}", String.valueOf(ATK));
 	}
 }

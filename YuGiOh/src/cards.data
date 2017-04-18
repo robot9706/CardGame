@@ -6,7 +6,7 @@
 
 Monster;cactus_small;Kis kaktusz;1;200;1000
 Monster;cactus_mid;Kaktusz;2;1500;3000
-Monster;cannon;Ágyú;3;2500;1000;DestroyRandomCard
+Monster;cannon;Ágyu;3;2500;1000;DestroyRandomCard
 Monster;cowboy;Cowboy;2;1500;1000;GrabRandomCard
 Monster;fuuu_face;FUUU;1;1000;250
 Monster;karate_master;Karate mester;3;2500;2000
@@ -16,7 +16,7 @@ Monster;mushroom;Gomba;1;500;250
 Monster;sand_barricade;Homok zsákok;2;0;1500;AddDEF;300
 Monster;scorpion;Skorpió;2;1500;1000
 Monster;snake_mid;Mérges kígyó;2;1250;750
-Monster;snake_small;Kígyó;1;500;250
+Monster;snake_small;Kígyo;1;500;250
 Monster;spider;Pók;2;1000;750
 Monster;turtle;Teknõs;2;500;2500
 Monster;wololo;Varázsló;2;500;2000;AddATK;300

@@ -5,15 +5,16 @@ import java.util.Random;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 import com.bence.yugioh.slots.CardSlot;
+import com.bence.yugioh.utils.Texts;
 
 /**
- * Szrönykártya képesség, mely elvesz egy véletlenszerû kártyát az ellenség kezébõl.
+ * Szronykartya kepesseg, mely elvesz egy veletlenszeru kartyat az ellenseg kezebol.
  * @author Bence
  *
  */
 public class GrabRandomCardSpecial extends MonsterOnPlaceSpecial {
 	public String GetDescription(){
-		return "Az ellenfél kezébõl kapsz egy véletlenszerû kártyát. A kártya lehelyezésekor aktiválódik";
+		return Texts.GrabRandomCardText;
 	}
 	
 	public void OnActivate(YuGiOhGame game, CardSlot placeSlot) {

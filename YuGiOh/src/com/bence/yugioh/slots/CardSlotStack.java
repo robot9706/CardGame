@@ -6,7 +6,7 @@ import com.bence.yugioh.Art;
 import com.bence.yugioh.player.Player;
 
 /**
- * Paklit megjelenítõ kártya slot.
+ * Paklit megjelenito kartya slot.
  * @author Bence
  *
  */
@@ -17,8 +17,8 @@ public class CardSlotStack extends CardSlot {
 
 	@Override
 	public void Draw(Graphics g, Player viewer){
-		if(Owner.Deck != null && Owner.Deck.size() > 0){ //Ha a játékosnak van paklija
-			for(int x = 0; x < Math.min(4, Owner.Deck.size()); x++){ //Megjelenítem a paklit, max 4 kártyáig
+		if(Owner.Deck != null && Owner.Deck.size() > 0){ //Ha a jatekosnak van paklija
+			for(int x = 0; x < Math.min(4, Owner.Deck.size()); x++){ //Megjelenitem a paklit, max 4 kartyaig
 				g.drawImage(Art.CardBack, X - 5 * x, Y - 7 * x, Width, Height, null);
 			}
 		}else{

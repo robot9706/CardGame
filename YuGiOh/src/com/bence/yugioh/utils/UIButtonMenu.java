@@ -6,7 +6,7 @@ import com.bence.yugioh.ButtonAction;
 import com.bence.yugioh.YuGiOhGame;
 
 /**
- * Egy menü gomb.
+ * Egy menu gomb.
  */
 public class UIButtonMenu extends UIButton {
 	public UIButtonMenu(YuGiOhGame game, String text, int x, int y, int w, int h, ButtonAction action){

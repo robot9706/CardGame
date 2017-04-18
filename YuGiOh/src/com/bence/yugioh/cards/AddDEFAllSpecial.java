@@ -1,7 +1,9 @@
 package com.bence.yugioh.cards;
 
+import com.bence.yugioh.utils.Texts;
+
 /**
- * Speciális szörny képesség mely minden szörnynek plusz DEF-et ad.
+ * Specialis szorny kepesseg mely minden szornynek plusz DEF-et ad.
  * @author Bence
  *
  */
@@ -13,7 +15,7 @@ public class AddDEFAllSpecial implements MonsterSpecial {
 	}
 	
 	public String GetDescription() {
-		return "Minden a pályán lévõ szörnynek ad " + String.valueOf(DEF) + " védekezési erõt.";
+		return Texts.AddDEFAllText.replace("{0}", String.valueOf(DEF));
 	}
 }
 

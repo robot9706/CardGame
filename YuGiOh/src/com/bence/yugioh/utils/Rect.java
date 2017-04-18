@@ -1,7 +1,7 @@
 package com.bence.yugioh.utils;
 
 /**
- * Egy téglalap.
+ * Egy teglalap.
  * @author Bence
  *
  */
@@ -19,7 +19,7 @@ public class Rect {
 	}
 	
 	/**
-	 * Visszadja, hogy egy pont benne van-e a téglalapban.
+	 * Visszadja, hogy egy pont benne van-e a teglalapban.
 	 */
 	public boolean IsPointInRect(int x, int y){
 		return (x >= X && y >= Y && x <= X + Width && y <= Y + Height);

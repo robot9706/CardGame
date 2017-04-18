@@ -3,7 +3,7 @@ package com.bence.yugioh.cards;
 import java.awt.Image;
 
 /**
- * Szörnykártya osztály.
+ * Szornykartya osztaly.
  * @author Bence
  *
  */
