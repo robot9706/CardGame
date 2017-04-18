@@ -6,6 +6,11 @@ import java.awt.Image;
 import com.bence.yugioh.Art;
 import com.bence.yugioh.player.Player;
 
+/**
+ * Slot, mely egy pályára helyezett kártyát tartalmaz.
+ * @author Bence
+ *
+ */
 public class CardSlotPlayfield extends CardSlot {
 	public boolean MonsterOnly;
 	public boolean Used;
@@ -31,7 +36,7 @@ public class CardSlotPlayfield extends CardSlot {
 	public void Draw(Graphics g, Player viewer){
 		super.Draw(g, viewer);
 		
-		if(Used && Card != null){
+		if(Used && Card != null){ //Ha a kártya már használva volt, "kihúzom" a kártyát
 			g.drawImage(Art.No, X, Y, Width, Height, null);
 		}
 	}

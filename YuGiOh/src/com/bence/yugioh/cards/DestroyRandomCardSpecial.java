@@ -6,6 +6,11 @@ import java.util.Random;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.slots.CardSlot;
 
+/**
+ * Szörnykártya képesség, mely elpusztít egy véletlenszerû ellenséges kártyát.
+ * @author Bence
+ *
+ */
 public class DestroyRandomCardSpecial extends MonsterOnPlaceSpecial {
 	public String GetDescription(){
 		return "Az ellenfél egy véletlenszerû kártyája megsemmisül. A kártya lehelyezésekor aktiválódik";

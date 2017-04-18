@@ -5,6 +5,11 @@ import java.awt.Image;
 import com.bence.yugioh.Art;
 import com.bence.yugioh.player.Player;
 
+/**
+ * Slot, mely egy játékos kezében lévõ kártyát tartalmaz.
+ * @author Bence
+ *
+ */
 public class CardSlotHand extends CardSlot {
 	public CardSlotHand(Player o,int x, int y){
 		super(o,x,y);

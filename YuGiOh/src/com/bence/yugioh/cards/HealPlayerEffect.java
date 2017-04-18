@@ -3,6 +3,11 @@ package com.bence.yugioh.cards;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 
+/**
+ * Varázykártya képesség, mely a használóját gyógyítja.
+ * @author Bence
+ *
+ */
 public class HealPlayerEffect implements MagicEffect {
 	private int _heal;
 	

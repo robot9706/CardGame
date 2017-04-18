@@ -1,5 +1,10 @@
 package com.bence.yugioh.cards;
 
+/**
+ * Speciális szörny képesség mely minden szörnynek plusz DEF-et ad.
+ * @author Bence
+ *
+ */
 public class AddDEFAllSpecial implements MonsterSpecial {
 	public int DEF;
 	

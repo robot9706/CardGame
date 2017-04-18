@@ -5,16 +5,20 @@ import java.awt.Graphics;
 import com.bence.yugioh.Art;
 import com.bence.yugioh.player.Player;
 
+/**
+ * Paklit megjelenítõ kártya slot.
+ * @author Bence
+ *
+ */
 public class CardSlotStack extends CardSlot {
 	public CardSlotStack(Player o,int x, int y){
 		super(o,x,y);
 	}
 
-	
 	@Override
 	public void Draw(Graphics g, Player viewer){
-		if(Owner.Deck != null && Owner.Deck.size() > 0){
-			for(int x = 0; x < Math.min(4, Owner.Deck.size()); x++){
+		if(Owner.Deck != null && Owner.Deck.size() > 0){ //Ha a játékosnak van paklija
+			for(int x = 0; x < Math.min(4, Owner.Deck.size()); x++){ //Megjelenítem a paklit, max 4 kártyáig
 				g.drawImage(Art.CardBack, X - 5 * x, Y - 7 * x, Width, Height, null);
 			}
 		}else{

@@ -8,10 +8,16 @@ import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotHand;
 import com.bence.yugioh.slots.CardSlotPlayfield;
 
+/**
+ * Taktikai fázis.
+ * @author Bence
+ *
+ */
 public class TacticsPhase extends GamePhase {
-	private boolean _isActivatingMagic;
-	private boolean _isPlacingCard;
-	private CardSlot _cardSource;
+	//A fázis állapotai.
+	private boolean _isActivatingMagic; //Varázskártyát akarok aktiválni.
+	private boolean _isPlacingCard; //Kártyát akarok a pályára helyezni.
+	private CardSlot _cardSource; //Tárolja, hogy honnan akarok kártyát helyezni a pályára.
 	
 	public TacticsPhase(YuGiOhGame game){
 		super(game);
@@ -24,11 +30,11 @@ public class TacticsPhase extends GamePhase {
 	}
 	
 	public void GotoNextPhase() {
-		Game.SetPhase(Game.PhaseAttack, false);
+		Game.SetPhase(Game.PhaseAttack, false); //A következõ fázis a támadó fázis, nincs játékos csere
 	}
 	
 	public void OnSlotClick(CardSlot slot){
-		if(slot == null){
+		if(slot == null){ //Ha nem slotra történt kattintás, akkor visszavonom az aktuális eseményt
 			if(_isPlacingCard || _isActivatingMagic){
 				_isPlacingCard = false;
 				_isActivatingMagic = false;
@@ -38,17 +44,17 @@ public class TacticsPhase extends GamePhase {
 			return;
 		}
 		
-		if(slot.Owner != Game.HumanPlayer)
+		if(slot.Owner != Game.HumanPlayer) //Ha nem a saját slotra akar kattintani a játékos akkor nem csinálok semmit
 			return;
 		
-		if(_isPlacingCard){
+		if(_isPlacingCard){ //Ha kártyát akarok a pályára helyezni, megnézem, hogy abba a slot-ba lehet,e
 			if(slot instanceof CardSlotPlayfield && slot.Card == null){ 
 				if(((CardSlotPlayfield)slot).MonsterOnly == (_cardSource.Card instanceof CardMonster)){
 					slot.Card = _cardSource.Card;
 					
 					if(slot.Card instanceof CardMonster){
 						CardMonster m = (CardMonster)slot.Card;
-						if(m.Special != null && m.Special instanceof MonsterOnPlaceSpecial){
+						if(m.Special != null && m.Special instanceof MonsterOnPlaceSpecial){ //Ha a szörnynek van képessége aktiválom
 							((MonsterOnPlaceSpecial)m.Special).OnActivate(Game, slot);
 						}
 					}
@@ -62,7 +68,7 @@ public class TacticsPhase extends GamePhase {
 					Game.RedrawFrame();
 				}
 			}
-		}else if(_isActivatingMagic){
+		}else if(_isActivatingMagic){ //Ha varázskártyát akarok aktiválni, megnézem hogy ezen a slot-on lehet-e
 			if(slot instanceof CardSlotPlayfield && slot.Card != null && slot.Card instanceof CardMonster){
 				((CardMagic)_cardSource.Card).Effect.ActivateOnTarget(slot.Card, Game);
 				
@@ -73,7 +79,7 @@ public class TacticsPhase extends GamePhase {
 				Game.RedrawFrame();
 			}
 		}else{
-			if(slot instanceof CardSlotHand){
+			if(slot instanceof CardSlotHand){ //Ha kéz slotra kattintok akkor kártyát akarok a pályára helyezni
 				if(slot.Card != null){
 					_isPlacingCard = true;
 					_isActivatingMagic = false;
@@ -82,7 +88,7 @@ public class TacticsPhase extends GamePhase {
 					Game.SetPlacementSlotHighlight(slot, (slot.Card instanceof CardMonster));
 					Game.RedrawFrame();
 				}
-			}else if(slot instanceof CardSlotPlayfield){
+			}else if(slot instanceof CardSlotPlayfield){ //Ha a pályára kattnintok akkor vagy varázslatot aktiválok, vagy szörny kártyát forgatok.
 				CardSlotPlayfield f = (CardSlotPlayfield)slot;
 				if(f.Card != null){
 					if(f.MonsterOnly){

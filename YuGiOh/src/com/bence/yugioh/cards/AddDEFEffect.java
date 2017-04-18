@@ -3,8 +3,13 @@ package com.bence.yugioh.cards;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 
+/**
+ * Varázs kártya képesség, mely egy kiválasztott szörny DEF-jét véglegesen megnöveli
+ * @author Bence
+ *
+ */
 public class AddDEFEffect implements MagicEffect {
-private int _def;
+	private int _def;
 	
 	public AddDEFEffect(int def){
 		_def = def;

@@ -2,8 +2,10 @@ package com.bence.yugioh.cards;
 
 import java.awt.Image;
 
-import com.bence.yugioh.Art;
-
+/**
+ * Kártya alaposztály.
+ *
+ */
 public abstract class Card {
 	public String Name;
 	public boolean IsRotated;
@@ -18,5 +20,8 @@ public abstract class Card {
 		SaveUID = uid;
 	}
 	
+	/**
+	 * Ad egy klónt a kártyáról.
+	 */
 	public abstract Card Clone();
 }

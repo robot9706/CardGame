@@ -3,17 +3,22 @@ package com.bence.yugioh.phases;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.slots.CardSlot;
 
+/**
+ * Egy támadás eredményét tárolja.
+ * @author Bence
+ *
+ */
 public class AttackResult {
 	public YuGiOhGame Game;
 	
-	public CardSlot Source = null;
-	public CardSlot Target  = null;
+	public CardSlot Source = null; //A forrás slot
+	public CardSlot Target  = null; //A cél slot
 	
-	public CardSlot WinnerSlot = null;
-	public int LoserDamage = 0;
+	public CardSlot WinnerSlot = null; //A nyertes slot
+	public int LoserDamage = 0; //A vesztes ennyi életet veszít
 	
-	public boolean SourceDestroyed = false;
-	public boolean TargetDestroyed = false;
+	public boolean SourceDestroyed = false; //A forrás elpusztul?
+	public boolean TargetDestroyed = false; //A cél elpusztul?
 	
 	public AttackResult(YuGiOhGame game, CardSlot source, CardSlot target){
 		Game = game;
@@ -22,6 +27,9 @@ public class AttackResult {
 		Target = target;
 	}
 	
+	/**
+	 * Elvégzi a támadás következményeit.
+	 */
 	public void DoActions(){
 		if(SourceDestroyed){
 			Source.Card = null;

@@ -2,6 +2,11 @@ package com.bence.yugioh.cards;
 
 import java.awt.Image;
 
+/**
+ * Varázskártya osztály.
+ * @author Bence
+ *
+ */
 public class CardMagic extends Card {
 	public MagicEffect Effect;
 	

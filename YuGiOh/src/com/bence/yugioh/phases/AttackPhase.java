@@ -6,8 +6,13 @@ import com.bence.yugioh.cards.CardMonster;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotPlayfield;
 
+/**
+ * Támadás fázis.
+ * @author Bence
+ *
+ */
 public class AttackPhase extends GamePhase {
-	private boolean _isAttacking = false;
+	private boolean _isAttacking = false; //Támadás állapot
 	private CardSlot _attackSource;
 	
 	public AttackPhase(YuGiOhGame game){
@@ -29,7 +34,7 @@ public class AttackPhase extends GamePhase {
 	}
 	
 	public void OnSlotClick(CardSlot slot){
-		if(slot == null){
+		if(slot == null){ //Ha nem slot-ra kattintok visszavonom az eseményeket
 			if(_isAttacking){
 				_isAttacking = false;
 				Game.ResetSlotHighlight();
@@ -38,13 +43,13 @@ public class AttackPhase extends GamePhase {
 			return;
 		}
 		
-		if(slot instanceof CardSlotPlayfield){
+		if(slot instanceof CardSlotPlayfield){ //Ha soltra kattintok megnézem, hogy lehet-e
 			if(((CardSlotPlayfield)slot).Used)
 				return;
 			
 			Card card = slot.Card;
 			
-			if(_isAttacking){
+			if(_isAttacking){ //Ha már támadok, megnézem, hogy ezt a slot-ot lehet-e támadni
 				if(slot.Owner == Game.ComputerPlayer && card != null){
 					_isAttacking = false;
 					Game.ResetSlotHighlight();
@@ -56,13 +61,13 @@ public class AttackPhase extends GamePhase {
 					Game.RedrawFrame();
 				}
 			}else{
-				if(slot.Owner == Game.HumanPlayer && card instanceof CardMonster && !card.IsRotated){
+				if(slot.Owner == Game.HumanPlayer && card instanceof CardMonster && !card.IsRotated){ //Ha nem támadok, megnézem, hogy ezzel lehet-e támadni
 					if(Game.HasMonstersPlaced(Game.ComputerPlayer)){
 						_isAttacking = true;
 						_attackSource = slot;
 						
 						Game.SetAttackSlotHighlight(slot);
-					}else{
+					}else{ //Ha nincs mit támadni, akkor az ellenfelet támadom közvetlenül
 						Game.DamagePlayer(Game.ComputerPlayer, ((CardMonster)card).Attack);
 						((CardSlotPlayfield)slot).Used = true;
 					}
@@ -73,10 +78,16 @@ public class AttackPhase extends GamePhase {
 		}
 	}
 	
+	/**
+	 * Végrehajt egy támadást.
+	 */
 	private void DoAttack(CardSlot source, CardSlot target){
 		GetAttackResult(source, target, Game).DoActions();
 	}
 	
+	/**
+	 * Kiszámolja egy támadás eredményét-
+	 */
 	public static AttackResult GetAttackResult(CardSlot source, CardSlot target, YuGiOhGame game){
 		CardMonster from = (CardMonster)source.Card;
 		CardMonster to = (CardMonster)target.Card;
@@ -118,40 +129,6 @@ public class AttackPhase extends GamePhase {
 				res.SourceDestroyed = true;
 			}
 		}
-		
-		/*if(target.Card.IsRotated){ //Attack vs Defense
-			if(fromATK > toDEF){
-				//target.Card = null;
-				res.WinnerSlot = source;
-				res.TargetDestroyed = true;
-			}else if(fromATK < toDEF){
-				int dif = toDEF - fromATK;
-				//game.DamagePlayer(source.Owner, dif);
-				
-				res.WinnerSlot = target;
-				res.LoserDamage = dif;
-			}
-		}else{ //Attack vs Attack
-			if(fromATK > toATK){
-				int dif = fromATK - toATK;
-				//target.Card = null;
-				
-				//game.DamagePlayer(target.Owner, dif);
-				
-				res.WinnerSlot = source;
-				res.LoserDamage = dif;
-				res.TargetDestroyed = true;
-			}else if(fromATK == toATK){
-				//source.Card = null;
-				//target.Card = null;
-				res.SourceDestroyed = true;
-				res.TargetDestroyed = true;
-			}else{
-				//source.Card = null;
-				res.WinnerSlot = target;
-				res.SourceDestroyed = true;
-			}
-		}*/
 		
 		return res;
 	}

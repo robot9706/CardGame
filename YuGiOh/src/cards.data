@@ -13,13 +13,13 @@ Monster;karate_master;Karate mester;3;2500;2000
 Monster;knight;Lovag;3;3000;3000
 Monster;magic_sword;Mágikus kard;1;1250;500
 Monster;mushroom;Gomba;1;500;250
-Monster;sand_barricade;Homok zsákok;2;0;1500;AddDEF;500
+Monster;sand_barricade;Homok zsákok;2;0;1500;AddDEF;300
 Monster;scorpion;Skorpió;2;1500;1000
 Monster;snake_mid;Mérges kígyó;2;1250;750
 Monster;snake_small;Kígyó;1;500;250
 Monster;spider;Pók;2;1000;750
 Monster;turtle;Teknõs;2;500;2500
-Monster;wololo;Varázsló;2;500;2000;AddATK;500
+Monster;wololo;Varázsló;2;500;2000;AddATK;300
 Monster;plant;Növény;1;1000;500
 Monster;thorns;Tüskék;1;750;750
 

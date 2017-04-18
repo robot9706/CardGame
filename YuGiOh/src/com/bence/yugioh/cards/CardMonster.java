@@ -2,6 +2,11 @@ package com.bence.yugioh.cards;
 
 import java.awt.Image;
 
+/**
+ * Szörnykártya osztály.
+ * @author Bence
+ *
+ */
 public class CardMonster extends Card {
 	public int Attack;
 	public int Defense;

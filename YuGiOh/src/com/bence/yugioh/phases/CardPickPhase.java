@@ -5,6 +5,11 @@ import com.bence.yugioh.player.Player;
 import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotStack;
 
+/**
+ * Kártyahúzás fázis.
+ * @author Bence
+ *
+ */
 public class CardPickPhase extends GamePhase {
 	public CardPickPhase(YuGiOhGame game){
 		super(game);
@@ -20,6 +25,9 @@ public class CardPickPhase extends GamePhase {
 		CheckPlayerDeck(Game.PhasePlayer);
 	}
 	
+	/**
+	 * Megnézi, hogy egy játékosnak van-e kártyája a paklijába, ha nincs 500 sebzést kap.
+	 */
 	private void CheckPlayerDeck(Player p){
 		if(p.Deck.size() == 0){
 			Game.DamagePlayer(p, 500);

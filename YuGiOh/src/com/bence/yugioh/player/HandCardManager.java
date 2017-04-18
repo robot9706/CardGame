@@ -10,13 +10,20 @@ import com.bence.yugioh.slots.CardSlot;
 import com.bence.yugioh.slots.CardSlotHand;
 import com.bence.yugioh.utils.Rect;
 
+/**
+ * Kezeli a játékos kezében lévõ kártyákat és a hozzájuk tartozó slot-okat.
+ * @author Bence
+ *
+ */
 public class HandCardManager {
 	private Player _player;
 	private ArrayList<CardSlotHand> _handSlots;
 	
+	//Jobbra, balra nyíl helye.
 	private Rect _leftArrow;
 	private Rect _rightArrow;
 	
+	//Slot elcsúsztatás.
 	private int _slotOffset = 0;
 	
 	public HandCardManager(Player p, ArrayList<CardSlotHand> slots){
@@ -27,20 +34,27 @@ public class HandCardManager {
 		_leftArrow = new Rect(slots.get(0).X - CardSlot.Width / 2, slots.get(0).Y + CardSlot.Height / 2 - CardSlot.Height / 4, CardSlot.Width / 2, CardSlot.Height / 2);
 	}
 	
+	/**
+	 * Visszaállítja az elcsúsztatást.
+	 */
 	public void ResetOffset(){
 		_slotOffset = 0;
 	}
 	
+	/*
+	 * Plusz információkat jelenít meg a játékos kezében lévõ kártyákhoz.
+	 */
 	public void Draw(Graphics g){
-		if(_player.Hand.size() > 5) {
-			if(CanScrollRight()){
+		if(_player.Hand.size() > 5) { //Ha több mint 5 kártya van
+			if(CanScrollRight()){ //Lehet jobbra csúsztatni?
 				g.drawImage(Art.ArrowRight, _rightArrow.X, _rightArrow.Y, _rightArrow.Width, _rightArrow.Height, null);
 			}
 			
-			if(CanScrollLeft()){ 
+			if(CanScrollLeft()){ //Lehet balra csúsztatni?
 				g.drawImage(Art.ArrowLeft, _leftArrow.X, _leftArrow.Y, _leftArrow.Width, _leftArrow.Height, null);
 			}
 			
+			//Megjelenítek egy kis csíkot mely mutatja, hogy mennyi kártya van és abból melyik 5 játszik.
 			int barX = _handSlots.get(0).X;
 			int barY = _handSlots.get(0).Y + CardSlot.Height + 4;
 			int barWidth = (_handSlots.get(_handSlots.size() - 1).X + CardSlot.Width) - _handSlots.get(0).X;
@@ -56,14 +70,23 @@ public class HandCardManager {
 		}
 	}
 	
+	/**
+	 * Visszaadja, hogy lehet-e jobbra csúsztatni.
+	 */
 	private boolean CanScrollRight(){
 		return (_slotOffset + 1 <= _player.Hand.size() - _handSlots.size());
 	}
 	
+	/**
+	 * Visszaadja, hogy lehet-e balra csúsztatni.
+	 */
 	private boolean CanScrollLeft(){
 		return (_slotOffset > 0);
 	}
 	
+	/**
+	 * Kattintás esemény.
+	 */
 	public boolean OnClick(int x, int y){
 		if(_rightArrow.IsPointInRect(x, y)){
 			if(CanScrollRight()){
@@ -88,6 +111,9 @@ public class HandCardManager {
 		return false;
 	}
 	
+	/**
+	 * Az elcsúsztatás alapján a kéz slot-okba rak kártyákat.
+	 */
 	private void ReassignCards(){
 		for(int x = 0;x<_handSlots.size();x++){
 			int cardIndex = x + _slotOffset;
@@ -100,18 +126,21 @@ public class HandCardManager {
 		}
 	}
 	
+	/**
+	 * Új kártya került a játékos kezébe.
+	 */
 	public void OnCardAdded(){
-		Card newCard = _player.Hand.get(_player.Hand.size() - 1);
+		Card newCard = _player.Hand.get(_player.Hand.size() - 1); //Az új kártya
 		
 		int emptySlot = -1;
-		for(int x = 0;x<_handSlots.size();x++) {
+		for(int x = 0;x<_handSlots.size();x++) { //Keresek egy üres helyet
 			if(_handSlots.get(x).Card == null) {
 				emptySlot = x;
 				break;
 			}
 		}
 
-		if(emptySlot == -1) {
+		if(emptySlot == -1) { //Ha nem volt, akkor mindent balra csúsztatok és a végére rakom az új kártyát
 			for(int x = 1;x<_handSlots.size();x++){
 				_handSlots.get(x-1).Card = _handSlots.get(x).Card;
 			}
@@ -120,11 +149,14 @@ public class HandCardManager {
 			_slotOffset = _player.Hand.size() - _handSlots.size();
 			if(_slotOffset < 0)
 				_slotOffset = 0;
-		} else {
+		} else { //Ha volt akkor az üres helyre rakom az új kártyát
 			_handSlots.get(emptySlot).Card = newCard;
 		}
 	}
 	
+	/**
+	 * Egy kártya eltávolításra került a játékos kezébõl.
+	 */
 	public void OnCardRemoved(){		
 		ReassignCards();
 	}

@@ -9,12 +9,21 @@ import java.util.Random;
 
 import com.bence.yugioh.Art;
 
+/**
+ * Kártya kezelõ osztály.
+ * @author Bence
+ *
+ */
 public class AllCards {
 	public static ArrayList<Card> MonsterCards;
 	public static ArrayList<Card> SpellCards;
 	
 	public static HashMap<Integer, Card> CardsBySaveUID;
 	
+	/**
+	 * Betölti a kártyákat.
+	 * @return
+	 */
 	public static boolean Load(){
 		if(MonsterCards != null)
 			return false;
@@ -31,20 +40,20 @@ public class AllCards {
 			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		
 			String line = null;
-			while((line = rd.readLine()) != null) {
-				if(line != null && (line.startsWith("#") || line.length() == 0))
+			while((line = rd.readLine()) != null) { //Soronként végig megyek a cards.data-n
+				if(line != null && (line.startsWith("#") || line.length() == 0)) //Ha nem üres a sor és nem megjegyzés
 					continue;
 				
-				String[] data = line.split(";");
+				String[] data = line.split(";"); //Pontosvesszõk mentén szétszedem a sort
 				
 				Card card = null;
 				
-				switch(data[0]){
+				switch(data[0]){ //A kártya típusa
 				case "Monster":
 					{
 						MonsterSpecial special = null;
 						
-						if(data.length > 6){
+						if(data.length > 6){ //Ha több adat van, mint ami egy alap szörnyhöz kell, akkor van képessége is
 							switch(data[6]){
 							case "AddATK":
 								special = new AddATKAllSpecial(Integer.parseInt(data[7]));
@@ -89,8 +98,8 @@ public class AllCards {
 					break;
 				}
 				
-				card.FrontImage = Art.GetCardImage(data[1]);
-				CardsBySaveUID.put(card.SaveUID, card);
+				card.FrontImage = Art.GetCardImage(data[1]); //Betöltöm a kártya képét
+				CardsBySaveUID.put(card.SaveUID, card); //Elrakom a kártyát a SaveUID-je alapján, ez kell majd mentések betöltéséhez
 			}
 			
 			rd.close();
@@ -105,6 +114,9 @@ public class AllCards {
 		return false;
 	}
 	
+	/**
+	 * Visszaad egy kártyát SaveUID alapján.
+	 */
 	public static Card GetCardBySaveUID(int uid){
 		if(CardsBySaveUID.containsKey(uid))
 			return CardsBySaveUID.get(uid).Clone();
@@ -112,29 +124,45 @@ public class AllCards {
 		return null;
 	}
 	
+	/**
+	 * Készít egy paklit.
+	 */
 	public static ArrayList<Card> CreateDeck(int size){
 		Random rnd = new Random();
 		
-		int maxSpells = size / 6;
+		int maxSpells = size / 6; //A pakli méretének hatoda lehet maximum varázs kártya
 		
-		ArrayList<Card> shuffle = new ArrayList<Card>();
+		ArrayList<Card> shuffle = new ArrayList<Card>(); //Tömb mely minden kártyából a kategória alapján tárol valamennyi darabot
 		for(Card c : MonsterCards){
-			int ct = ((3 - c.Category) + 1) * 2;
+			int ct = ((3 - c.Category) + 1) * 2; //Az elsõ kategóriásból 6db, a másodikból 4db, a harmadikból pedig 2db lehet
 			
 			for(int x = 0;x<ct;x++){
 				shuffle.add(c);
 			}
 		}
 		
-		ArrayList<Card> deckSorted = new ArrayList<Card>();
-		for(int x = 0;x<maxSpells;x++){
-			deckSorted.add(SpellCards.get(rnd.nextInt(SpellCards.size())).Clone());
+		HashMap<Integer, Integer> counter = new HashMap<Integer, Integer>(); //Tárolja, hogy egy kártyából mennyi van már a pakliban
+		
+		ArrayList<Card> deckSorted = new ArrayList<Card>(); //Rendezett pakli
+		while(deckSorted.size() < maxSpells){
+			Card c = SpellCards.get(rnd.nextInt(SpellCards.size())); //Választok egy random varázs kártyát
+			
+			int count = 0;
+			if(counter.containsKey(c.SaveUID)){
+				count = counter.get(c.SaveUID);
+				if(count >= 3){ //Ha már volt belõle 3
+					continue; //Akkor ezt nem rakhatom
+				}
+			}
+			
+			count++;
+			counter.put(c.SaveUID, count);
+			
+			deckSorted.add(c.Clone());
 		}
 		
-		HashMap<Integer, Integer> counter = new HashMap<Integer, Integer>();
-		
-		while(deckSorted.size() < size){
-			Card c = shuffle.get(rnd.nextInt(shuffle.size()));
+		while(deckSorted.size() < size){ //Kitöltöm a paklit szörny kártyákkal
+			Card c = shuffle.get(rnd.nextInt(shuffle.size())); //Választok egy random kártyát a szörnykártyák közül, mivel több van a kisebb szintûekbõl így több kisebb szintû lesz mint nagyobb
 			
 			int count = 0;
 			if(counter.containsKey(c.SaveUID)){
@@ -150,6 +178,7 @@ public class AllCards {
 			deckSorted.add(c.Clone());
 		}
 		
+		//Összekeverem a paklit
 		ArrayList<Card> deck = new ArrayList<Card>();
 		while(deckSorted.size() > 0){
 			int idx = rnd.nextInt(deckSorted.size());

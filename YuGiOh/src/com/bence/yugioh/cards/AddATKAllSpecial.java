@@ -1,5 +1,10 @@
 package com.bence.yugioh.cards;
 
+/**
+ * Speciális szörny képesség mely minden szörnynek plusz ATK-t ad.
+ * @author Bence
+ *
+ */
 public class AddATKAllSpecial implements MonsterSpecial {
 	public int ATK;
 	

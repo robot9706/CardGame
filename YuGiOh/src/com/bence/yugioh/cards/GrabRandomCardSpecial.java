@@ -6,6 +6,11 @@ import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 import com.bence.yugioh.slots.CardSlot;
 
+/**
+ * Szrönykártya képesség, mely elvesz egy véletlenszerû kártyát az ellenség kezébõl.
+ * @author Bence
+ *
+ */
 public class GrabRandomCardSpecial extends MonsterOnPlaceSpecial {
 	public String GetDescription(){
 		return "Az ellenfél kezébõl kapsz egy véletlenszerû kártyát. A kártya lehelyezésekor aktiválódik";

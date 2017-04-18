@@ -5,6 +5,9 @@ import java.awt.Color;
 import com.bence.yugioh.ButtonAction;
 import com.bence.yugioh.YuGiOhGame;
 
+/**
+ * Egy menü gomb.
+ */
 public class UIButtonMenu extends UIButton {
 	public UIButtonMenu(YuGiOhGame game, String text, int x, int y, int w, int h, ButtonAction action){
 		super(game, text, x, y, w, h, action);

@@ -3,6 +3,11 @@ package com.bence.yugioh.cards;
 import com.bence.yugioh.YuGiOhGame;
 import com.bence.yugioh.player.Player;
 
+/**
+ * Varázs kártya képesség, mely egy kiválasztott szörny ATK-ját véglegesen megnöveli
+ * @author Bence
+ *
+ */
 public class AddATKEffect implements MagicEffect {
 	private int _atk;
 	
