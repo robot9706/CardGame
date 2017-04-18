@@ -547,6 +547,7 @@ public class YuGiOhGame {
 					CardSlot slot = _slots.get(x);
 					data.writeInt(x);
 					if(slot instanceof CardSlotPlayfield){
+						data.writeBoolean(((CardSlotPlayfield)slot).Used);
 						data.writeBoolean(slot.Card != null);
 						if(slot.Card != null){
 							data.writeInt(slot.Card.SaveUID);
@@ -612,10 +613,12 @@ public class YuGiOhGame {
 				}
 				
 				int size = data.readInt();
+				boolean[] usedStates = new boolean[size];
 				for(int i = 0;i<size;i++){
 					int x = data.readInt();
 					CardSlot slot = _slots.get(x);
 					if(slot instanceof CardSlotPlayfield){
+						usedStates[x] = data.readBoolean();
 						if(data.readBoolean()){
 							slot.Card = AllCards.GetCardBySaveUID(data.readInt());
 						}else{
@@ -656,6 +659,13 @@ public class YuGiOhGame {
 					break;
 				case 3:
 					SetPhase(PhaseAttack, false);
+					
+					for(int x = 0;x<usedStates.length;x++){
+						CardSlot s = _slots.get(x);
+						if(s instanceof CardSlotPlayfield){
+							((CardSlotPlayfield)s).Used = usedStates[x];
+						}
+					}
 					break;
 				}
 				
@@ -822,6 +832,6 @@ public class YuGiOhGame {
 	private void UpdateMenu() {
 		_exitGameButtonType1.Visible = !_gameRunning;
 		
-		_exitGameButtonType2.Visible = _saveGameButton.Visible = !_exitGameButtonType2.Visible;
+		_exitGameButtonType2.Visible = _saveGameButton.Visible = _gameRunning;
 	}
 }

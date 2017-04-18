@@ -1,26 +1,31 @@
 #Type(Monster/Magic);Image;Name;
-#            Monster;Category (1-3);ATK;DEF;Special;SpecialValue
-#            Magic  ;Effect;Value
+#            Monster;          ;Category (1-3);ATK;DEF;[Special];[SpecialValue]
+#            Magic  ;          ;Effect;Value
 #Monster;Weak monster;1;1;DestroyRandomCard
 #Magic;Magic 1;HealPlayer;500
 
 Monster;cactus_small;Kis kaktusz;1;200;1000
 Monster;cactus_mid;Kaktusz;2;1500;3000
 Monster;cannon;Ágyú;3;2500;1000;DestroyRandomCard
-Monster;cowboy;Cowboy;3;2000;1500;GrabRandomCard
+Monster;cowboy;Cowboy;2;1500;1000;GrabRandomCard
 Monster;fuuu_face;FUUU;1;1000;250
-Monster;karate_master;Karate mester;3;3000;2000
+Monster;karate_master;Karate mester;3;2500;2000
 Monster;knight;Lovag;3;3000;3000
-Monster;magic_sword;Mágikus kard;1;1000;100
+Monster;magic_sword;Mágikus kard;1;1250;500
 Monster;mushroom;Gomba;1;500;250
-Monster;sand_barricade;Homok zsákok;3;0;2000;AddDEF;500
+Monster;sand_barricade;Homok zsákok;2;0;1500;AddDEF;500
 Monster;scorpion;Skorpió;2;1500;1000
 Monster;snake_mid;Mérges kígyó;2;1250;750
 Monster;snake_small;Kígyó;1;500;250
-Monster;spider;Pók;3;1000;750
+Monster;spider;Pók;2;1000;750
 Monster;turtle;Teknõs;2;500;2500
 Monster;wololo;Varázsló;2;500;2000;AddATK;500
+Monster;plant;Növény;1;1000;500
+Monster;thorns;Tüskék;1;750;750
 
 Magic;spell_health;Gyógyítás;HealPlayer;500
 Magic;spell_shield;Páncél;AddDEF;500
 Magic;spell_mace;Buzogány;AddATK;500
+Magic;spell_health2;Ragtapasz;HealPlayer;250
+Magic;spell_mace2;Fa ütõ;AddATK;250
+Magic;spell_helmet;Sisak;AddDEF;250

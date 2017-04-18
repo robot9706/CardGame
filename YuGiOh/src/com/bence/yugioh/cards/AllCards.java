@@ -122,7 +122,7 @@ public class AllCards {
 			int ct = ((3 - c.Category) + 1) * 2;
 			
 			for(int x = 0;x<ct;x++){
-				shuffle.add(c.Clone());
+				shuffle.add(c);
 			}
 		}
 		
@@ -130,8 +130,24 @@ public class AllCards {
 		for(int x = 0;x<maxSpells;x++){
 			deckSorted.add(SpellCards.get(rnd.nextInt(SpellCards.size())).Clone());
 		}
-		for(int x = 0;x<size-maxSpells;x++){
-			deckSorted.add(shuffle.get(rnd.nextInt(shuffle.size())).Clone());
+		
+		HashMap<Integer, Integer> counter = new HashMap<Integer, Integer>();
+		
+		while(deckSorted.size() < size){
+			Card c = shuffle.get(rnd.nextInt(shuffle.size()));
+			
+			int count = 0;
+			if(counter.containsKey(c.SaveUID)){
+				count = counter.get(c.SaveUID);
+				if(count >= 3){
+					continue;
+				}
+			}
+			
+			count++;
+			counter.put(c.SaveUID, count);
+			
+			deckSorted.add(c.Clone());
 		}
 		
 		ArrayList<Card> deck = new ArrayList<Card>();
