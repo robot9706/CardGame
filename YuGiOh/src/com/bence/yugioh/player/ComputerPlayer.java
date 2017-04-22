@@ -174,7 +174,7 @@ public class ComputerPlayer extends Player {
 	 * Kezeli a taktikai fazist.
 	 */
 	private void AI_Tactics(TacticsPhase phase) throws Exception {
-		if(Hand.size() > 0){ //Megnezem, hogy van-e kartyam és ha van lerakok egy random kartyat
+		if(Hand.size() > 0){ //Megnezem, hogy van-e kartyam es ha van lerakok egy random kartyat
 			Card c = Hand.get(_random.nextInt(Hand.size()));
 			
 			if (PlaceCard(c) && c instanceof CardMonster){
