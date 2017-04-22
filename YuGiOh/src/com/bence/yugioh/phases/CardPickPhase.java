@@ -24,6 +24,8 @@ public class CardPickPhase extends GamePhase {
 	
 	public void OnPhaseActivated(){
 		CheckPlayerDeck(Game.PhasePlayer);
+		
+		Game.PhasePlayer.HandCardManager.CardPlacementAllowed = true; //Engedelyezem a jatekosnak a kartya lerakast
 	}
 	
 	/**

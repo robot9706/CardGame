@@ -16,6 +16,9 @@ import com.bence.yugioh.utils.Rect;
  *
  */
 public class HandCardManager {
+	//Tarolja, hogy lehet-e kartyat rakni a palyara
+	public boolean CardPlacementAllowed;
+	
 	private Player _player;
 	private ArrayList<CardSlotHand> _handSlots;
 	

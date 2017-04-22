@@ -745,6 +745,9 @@ public class YuGiOhGame {
 				//Azt, hogy ki jatszik
 				data.writeBoolean(PhasePlayer == HumanPlayer);
 				
+				//Elmentem azt, hogy az emberi jatekos rakott-e mar kartyat ebben a korben
+				data.writeBoolean(HumanPlayer.HandCardManager.CardPlacementAllowed);
+				
 				//A jelenlegi fazist is
 				if(_phase == PhaseCardPick){
 					data.writeByte(1);
@@ -841,6 +844,9 @@ public class YuGiOhGame {
 				}else{
 					PhasePlayer = ComputerPlayer;
 				}
+				
+				//Betoltom, hogy az emberi jatekos rakott-e mar kartyat
+				HumanPlayer.HandCardManager.CardPlacementAllowed = data.readBoolean();
 				
 				switch(data.readByte()){ //A fazist
 				case 1:

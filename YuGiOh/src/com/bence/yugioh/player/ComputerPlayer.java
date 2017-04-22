@@ -31,7 +31,7 @@ public class ComputerPlayer extends Player {
 	public ComputerPlayer(YuGiOhGame game){
 		super(game);	
 		
-		_random = new Random();
+		_random = new Random();	
 	}
 	
 	/**
@@ -51,6 +51,8 @@ public class ComputerPlayer extends Player {
 				}
 			}
 		}
+		
+		HandCardManager.CardPlacementAllowed = true;
 	}
 	
 	/**
@@ -172,17 +174,15 @@ public class ComputerPlayer extends Player {
 	 * Kezeli a taktikai fazist.
 	 */
 	private void AI_Tactics(TacticsPhase phase) throws Exception {
-		for(int x = 0;x<_random.nextInt(2)+2;x++){ //Random darab kartyat helyez a palyara.
-			if(Hand.size() > 0){
-				Card c = Hand.get(0);
-								
-				if (PlaceCard(c) && c instanceof CardMonster){
-					CardMonster m = (CardMonster)c;
-					if(m.Defense > m.Attack){
-						m.IsRotated = true;
+		if(Hand.size() > 0){ //Megnezem, hogy van-e kartyam és ha van lerakok egy random kartyat
+			Card c = Hand.get(_random.nextInt(Hand.size()));
+			
+			if (PlaceCard(c) && c instanceof CardMonster){
+				CardMonster m = (CardMonster)c;
+				if(m.Defense > m.Attack){
+					m.IsRotated = true;
 
-						Game.RedrawFrame();
-					}
+					Game.RedrawFrame();
 				}
 			}
 		}

@@ -45,7 +45,7 @@ public class TacticsPhase extends GamePhase {
 			return;
 		}
 		
-		if(slot.Owner != Game.HumanPlayer) //Ha nem a sajat slotra akar kattintani a jatekos akkor nem csinalok semmit
+		if(slot.Owner != Game.PhasePlayer) //Ha nem a sajat slotra akar kattintani a jatekos akkor nem csinalok semmit
 			return;
 		
 		if(_isPlacingCard){ //Ha kartyat akarok a palyara helyezni, megnezem, hogy abba a slot-ba lehet,e
@@ -60,7 +60,8 @@ public class TacticsPhase extends GamePhase {
 						}
 					}
 					
-					Game.HumanPlayer.RemoveCardFromHand(_cardSource.Card);
+					Game.PhasePlayer.RemoveCardFromHand(_cardSource.Card);
+					Game.PhasePlayer.HandCardManager.CardPlacementAllowed = false;
 					
 					_isPlacingCard = false;
 					
@@ -81,7 +82,7 @@ public class TacticsPhase extends GamePhase {
 			}
 		}else{
 			if(slot instanceof CardSlotHand){ //Ha kez slotra kattintok akkor kartyat akarok a palyara helyezni
-				if(slot.Card != null){
+				if(slot.Card != null && Game.PhasePlayer.HandCardManager.CardPlacementAllowed){
 					_isPlacingCard = true;
 					_isActivatingMagic = false;
 					_cardSource = slot;
@@ -106,7 +107,7 @@ public class TacticsPhase extends GamePhase {
 							Game.SetMagicActivateSlotHighlight(slot);
 							Game.RedrawFrame();
 						}else{
-							m.Effect.Activate(Game, Game.HumanPlayer);
+							m.Effect.Activate(Game, Game.PhasePlayer);
 							slot.Card = null;
 							Game.RedrawFrame();
 						}
