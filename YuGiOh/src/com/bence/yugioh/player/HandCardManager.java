@@ -40,8 +40,12 @@ public class HandCardManager {
 	/**
 	 * Visszaallitja az elcsusztatast.
 	 */
-	public void ResetOffset(){
+	public void Reset(){
 		_slotOffset = 0;
+		
+		for(int x = 0;x<_handSlots.size();x++){
+			_handSlots.get(x).Card = null;
+		}
 	}
 	
 	/*

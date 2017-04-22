@@ -231,14 +231,14 @@ public class YuGiOhGame {
 		ComputerPlayer.Health = 4000;
 		HumanPlayer.Health = 4000;
 		
+		//Alaphelyzetbe allitom a kez kartya manager-t
+		ComputerPlayer.HandCardManager.Reset();
+		HumanPlayer.HandCardManager.Reset();
+		
 		int deckSize = 30; //Hard Code-olt pakli meret
 		//Keszitek paklit a 2 jatekosnak es atadom azt is, hogy ez egy kezdo pakli
 		HumanPlayer.InitCards(AllCards.CreateDeck(deckSize), true);
 		ComputerPlayer.InitCards(AllCards.CreateDeck(deckSize), true);
-		
-		//Alaphelyzetbe allitom a kez kartya manager-t
-		ComputerPlayer.HandCardManager.ResetOffset();
-		HumanPlayer.HandCardManager.ResetOffset();
 		
 		//Az emberi jatekos kezd
 		PhasePlayer = HumanPlayer;
@@ -727,6 +727,7 @@ public class YuGiOhGame {
 						data.writeBoolean(slot.Card != null);
 						if(slot.Card != null){
 							data.writeInt(slot.Card.SaveUID);
+							data.writeBoolean(slot.Card.IsRotated);
 						}
 					}
 				}
@@ -813,27 +814,28 @@ public class YuGiOhGame {
 						usedStates[x] = data.readBoolean();
 						if(data.readBoolean()){
 							slot.Card = AllCards.GetCardBySaveUID(data.readInt());
+							slot.Card.IsRotated = data.readBoolean();
 						}else{
 							slot.Card = null;
 						}
 					}
 				}
 				
+				//A kez manager-t ujra kell inditani
+				ComputerPlayer.HandCardManager.Reset();
+				HumanPlayer.HandCardManager.Reset();
+				
 				//Betoltom a paklikat is
 				ArrayList<Card> tempList = new ArrayList<Card>();
 				ReadCardList(data, tempList);
-				ComputerPlayer.AddArrayOfCards(tempList);
+				ComputerPlayer.SetHandArrayOfCards(tempList);
 				ReadCardList(data, tempList);
 				ComputerPlayer.InitCards(tempList, false);
 								
 				ReadCardList(data, tempList);
-				HumanPlayer.AddArrayOfCards(tempList);
+				HumanPlayer.SetHandArrayOfCards(tempList);
 				ReadCardList(data, tempList);
 				HumanPlayer.InitCards(tempList, false);
-				
-				//A kez manager-t ujra kell inditani
-				ComputerPlayer.HandCardManager.ResetOffset();
-				HumanPlayer.HandCardManager.ResetOffset();
 				
 				//Betoltom a jatekosok eletet
 				HumanPlayer.Health = data.readInt();

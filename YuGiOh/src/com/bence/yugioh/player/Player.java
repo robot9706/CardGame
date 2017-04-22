@@ -31,7 +31,9 @@ public class Player {
 	/**
 	 * Tombnyi kartyat helyez a jatekos kezebe.
 	 */
-	public void AddArrayOfCards(ArrayList<Card> cards){
+	public void SetHandArrayOfCards(ArrayList<Card> cards){
+		Hand.clear();
+		
 		for(int x = 0;x<cards.size();x++){
 			AddCardToHand(cards.get(x));
 		}
